@@ -1,0 +1,16 @@
+# Playwright MCP cache
+.playwright-mcp/
+
+# Windows Zone.Identifier files
+*.Zone.Identifier
+
+# Node modules (if any)
+node_modules/
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
