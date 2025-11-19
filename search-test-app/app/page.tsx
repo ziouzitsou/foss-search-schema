@@ -100,10 +100,10 @@ export default function SearchPage() {
   useEffect(() => {
     console.log('🔍 Search triggered by filter change:', {
       selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible,
-      trimless, cutShapeRound, cutShapeRectangular
+      trimless, cutShapeRound, cutShapeRectangular, activeFilters
     })
     handleSearch()
-  }, [selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular, activeFilters]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load dynamic flag counts based on current filters
   // This updates whenever filters change, showing only available options
