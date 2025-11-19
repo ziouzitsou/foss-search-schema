@@ -6,44 +6,113 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a **documentation-only repository** containing a complete implementation guide for building a high-performance product search system for the Foss SA luminaires database. The repository contains no executable code - only comprehensive documentation, SQL schemas, and integration examples.
+This repository contains a **complete, working product search system** for the Foss SA lighting catalog.
 
-**Target System**: Supabase (PostgreSQL) database with Next.js frontend
-**Source Data**: items.product_info (materialized view filtering items.catalog by selected catalogs)
-**Current Products**: 14,889+ lighting products with 1.38M ETIM features
-**Production App**: FOSSAPP at https://app.titancnc.eu
+**Current Status**: ✅ v2.5 Production-Ready (November 19, 2025)
+**Running App**: http://localhost:3001 (Next.js 15.5.6)
+**Target Database**: Supabase PostgreSQL (14,889+ products)
+**Production Deployment**: Ready for FOSSAPP integration at https://app.titancnc.eu
+
+**What's Included**:
+- ✅ **Fully functional search-test-app** (1,567 lines of React components)
+- ✅ **16 SQL files** implementing complete search schema
+- ✅ **7 RPC functions** deployed to Supabase
+- ✅ **Delta Light-style filters** (Electricals, Design, Light Engine)
+- ✅ **Dynamic facets** with context-aware filter counts
+- ✅ **Hierarchical taxonomy** navigation
+- ✅ **Comprehensive documentation** (reorganized November 19, 2025)
+
+**This is NOT a concept** - run `cd search-test-app && npm run dev` to see it working right now.
 
 ---
 
-## Documentation Structure
+## Documentation Structure (Reorganized Nov 19, 2025)
 
-The repository contains three interconnected documentation files that should be read in order:
+### 📖 Start Here
 
-### 1. INDEX.md (Start Here)
-- **Purpose**: Package overview and quick navigation
-- **Read when**: First time exploring the repository
-- **Contains**: File descriptions, implementation checklist, critical warnings
+**README.md** - Main entry point
+- Current v2.5 status and features
+- Quick start guide
+- Project structure overview
+- Common tasks and troubleshooting
 
-### 2. QUICKSTART.md (Implementation Guide)
-- **Purpose**: 30-minute step-by-step implementation guide
-- **Read when**: Ready to implement the search schema
-- **Contains**: SQL execution order, test queries, troubleshooting, verification scripts
-- **Key sections**:
-  - Step-by-step SQL file execution (4 files)
-  - ETIM Feature ID mapping instructions (CRITICAL)
-  - Verification queries
-  - Maintenance operations
+**QUICKSTART.md** - 30-minute implementation guide
+- SQL file execution order (00-09)
+- ETIM feature ID mapping (CRITICAL)
+- Verification queries
+- Maintenance operations
 
-### 3. search-schema-complete-guide.md (Reference)
-- **Purpose**: Complete technical reference and architecture documentation
-- **Read when**: Need to understand design decisions or customize implementation
-- **Contains**: Full schema definitions, architecture diagrams, Next.js integration code
-- **Key sections**:
-  - Section 2: Architecture Overview
-  - Section 3: Schema Definition (all SQL)
-  - Section 5: Next.js Integration (TypeScript examples)
-  - Section 7: Query Examples
-  - Section 8: Maintenance & Operations
+### 🏗️ Architecture Documentation (`docs/architecture/`)
+
+**overview.md** - System architecture and design
+- Three-tier search architecture
+- Database schema relationships
+- Data flow diagrams
+- Design principles and patterns
+
+**ui-components.md** - React component architecture (TBD)
+- FilterPanel, FacetedCategoryNavigation
+- Component props and state management
+- Integration patterns
+
+### 📚 Implementation Guides (`docs/guides/`)
+
+**fossapp-integration.md** - Production integration guide
+- Server actions implementation
+- API routes setup
+- Component integration
+- Deployment checklist
+
+**delta-light-filters.md** - Technical filter system
+- 18 Delta Light-style filters
+- ETIM feature mapping (complete table)
+- Phase 1 (deployed), Phase 2 (ready), Phase 3 (documented)
+- UI component details
+
+**dynamic-facets.md** - Context-aware filtering
+- How dynamic facets work
+- `get_dynamic_facets()` function
+- Performance considerations
+- UI integration examples
+
+**mcp-installation.md** - MCP server setup
+
+**gemini-instructions.md** - Gemini AI integration
+
+### 📑 Reference Documentation (`docs/reference/`)
+
+**search-schema-complete-guide.md** - Complete technical reference
+- All SQL table definitions
+- Materialized view structures
+- Function signatures
+- Next.js integration code examples
+
+**sql-functions.md** - RPC function reference (TBD)
+- All 7 functions documented
+- Parameters, return types, examples
+
+**public-wrappers.md** - Public schema wrapper explanation
+
+**taxonomy-validation-2025-11-08.md** - Historical validation report
+
+### 📦 SQL Implementation (`sql/`)
+
+**README.md** - SQL execution guide
+- 16 files (00-drop through 09-dynamic-facets)
+- Execution order
+- Verification queries
+- Bug fixes history
+
+### 🗄️ Archive (`docs/archive/`)
+
+**2025-11-03/** - Initial implementation docs
+- final-status.md, test-results.md, etc.
+
+**2025-11-15/** - Cleanup and Delta implementation
+- cleanup-summary.md
+
+**2025-11-15-delta-implementation/** - Original Delta Light docs
+- 7 implementation files (consolidated into delta-light-filters.md)
 
 ---
 
