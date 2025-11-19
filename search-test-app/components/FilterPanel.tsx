@@ -21,9 +21,29 @@ export type FilterPanelProps = {
   onFilterChange: (filters: FilterState) => void
   taxonomyCode?: string
   selectedTaxonomies?: string[]
+  indoor?: boolean | null
+  outdoor?: boolean | null
+  submersible?: boolean | null
+  trimless?: boolean | null
+  cutShapeRound?: boolean | null
+  cutShapeRectangular?: boolean | null
+  query?: string | null
+  suppliers?: string[]
 }
 
-export default function FilterPanel({ onFilterChange, taxonomyCode = 'LUMINAIRE', selectedTaxonomies = [] }: FilterPanelProps) {
+export default function FilterPanel({
+  onFilterChange,
+  taxonomyCode = 'LUMINAIRE',
+  selectedTaxonomies = [],
+  indoor = null,
+  outdoor = null,
+  submersible = null,
+  trimless = null,
+  cutShapeRound = null,
+  cutShapeRectangular = null,
+  query = null,
+  suppliers = []
+}: FilterPanelProps) {
   const [filterDefinitions, setFilterDefinitions] = useState<FilterDefinition[]>([])
   const [filterFacets, setFilterFacets] = useState<FilterFacet[]>([])
   const [filterState, setFilterState] = useState<FilterState>({})
@@ -33,9 +53,11 @@ export default function FilterPanel({ onFilterChange, taxonomyCode = 'LUMINAIRE'
   const [loading, setLoading] = useState(true)
 
   // Load filter definitions and facets
+  // Only reload when taxonomy or selected taxonomies change
+  // (Don't reload on every flag change to avoid excessive API calls)
   useEffect(() => {
     loadFilters()
-  }, [taxonomyCode, selectedTaxonomies])
+  }, [taxonomyCode, selectedTaxonomies.join(',')])
 
   const loadFilters = async () => {
     try {
@@ -49,13 +71,27 @@ export default function FilterPanel({ onFilterChange, taxonomyCode = 'LUMINAIRE'
 
       if (defError) throw defError
 
-      // Get DYNAMIC filter facets based on selected taxonomies
+      // Get DYNAMIC filter facets based on selected taxonomies AND all current filter selections
       const { data: facets, error: facetsError } = await supabase
         .rpc('get_dynamic_facets', {
-          p_taxonomy_codes: selectedTaxonomies.length > 0 ? selectedTaxonomies : null
+          p_taxonomy_codes: selectedTaxonomies.length > 0 ? selectedTaxonomies : null,
+          p_filters: null, // Technical filters handled separately by design
+          p_suppliers: suppliers.length > 0 ? suppliers : null,
+          p_indoor: indoor,
+          p_outdoor: outdoor,
+          p_submersible: submersible,
+          p_trimless: trimless,
+          p_cut_shape_round: cutShapeRound,
+          p_cut_shape_rectangular: cutShapeRectangular,
+          p_query: query
         })
 
       if (facetsError) throw facetsError
+
+      console.log('✅ Dynamic technical filter facets loaded with context:', {
+        taxonomyCodes: selectedTaxonomies,
+        indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular
+      })
 
       setFilterDefinitions(definitions || [])
       setFilterFacets(facets || [])

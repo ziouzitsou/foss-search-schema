@@ -665,3 +665,27 @@ When working with this repository:
 **Repository Purpose**: Documentation for search schema implementation
 **Target Database**: Supabase PostgreSQL (14,889+ products)
 **Implementation Time**: 30 minutes (quickstart) to 2-3 hours (full customization)
+- INSTRUCTION: Playwright MCP Screenshot Workaround
+
+  When taking screenshots or inspecting web pages with Playwright MCP:
+
+  1. ALWAYS use mcp__playwright__browser_snapshot instead of mcp__playwright__browser_take_screenshot
+    - Returns page accessibility structure as YAML (text-based)
+    - Avoids image encoding bugs that cause context hanging
+    - No mismatch between declared format and actual format
+  2. Why NOT to use mcp__playwright__browser_take_screenshot:
+    - Tool saves PNG but declares as JPEG in API request
+    - Creates image encoding mismatch error
+    - Can cause context to hang
+    - Requires workaround debugging to resolve
+  3. Workflow:
+  mcp__playwright__browser_navigate(url)
+    ↓
+  mcp__playwright__browser_snapshot()  ← Use this, not take_screenshot
+  4. Benefits of snapshot:
+    - Returns structured page content (headings, links, text, form fields)
+    - Fast and reliable
+    - No image/encoding issues
+    - Perfect for verification and debugging tasks
+
+  Remember: If you need page structure, content, or to verify UI state → use snapshot. Don't use take_screenshot.

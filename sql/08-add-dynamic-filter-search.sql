@@ -51,7 +51,7 @@ BEGIN
         pi.supplier_name,
         pi.class_name,
         (pi.prices->0->>'start_price')::NUMERIC as price,
-        (pi.multimedia->0->>'mime_source') as image_url,
+        (SELECT elem->>'mime_source' FROM jsonb_array_elements(pi.multimedia) AS elem WHERE elem->>'mime_code' = 'MD01' LIMIT 1) as image_url,
         ptf.taxonomy_path,
         jsonb_build_object(
             'indoor', ptf.indoor,
