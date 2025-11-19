@@ -7,10 +7,25 @@ This guide will walk you through implementing the search infrastructure for your
 
 ## Prerequisites
 
-✅ Supabase project with existing `items` and `etim` schemas  
-✅ PostgreSQL access (via Supabase SQL Editor or psql)  
-✅ 14,889 products already loaded in `items.product_info`  
-✅ Basic understanding of SQL  
+✅ Supabase project with existing `items` and `etim` schemas
+✅ PostgreSQL access (via Supabase SQL Editor or psql)
+✅ 14,889 products already loaded in `items.product_info`
+✅ Basic understanding of SQL
+
+---
+
+## Documentation Guide
+
+This quickstart focuses on database setup. For other topics:
+
+- **README.md** - Project overview and getting started
+- **docs/architecture/overview.md** - System architecture and design decisions
+- **docs/guides/fossapp-integration.md** - Next.js integration guide
+- **docs/guides/delta-light-filters.md** - Delta Light-style technical filters
+- **docs/guides/dynamic-facets.md** - Context-aware filter counts
+- **docs/guides/maintenance.md** - Daily/weekly/monthly operations
+- **docs/reference/sql-functions.md** - All RPC functions with examples
+- **docs/architecture/ui-components.md** - React components documentation
 
 ---
 
@@ -443,10 +458,12 @@ VACUUM ANALYZE search.product_taxonomy_flags;
 ## Next Steps
 
 1. ✅ **Schema installed and tested**
-2. 🚀 **Integrate with Next.js** - See `search-schema-complete-guide.md` section on "Next.js Integration"
-3. 🎨 **Build UI components** - See example React components in the guide
-4. 📊 **Add analytics** - Track which filters users use most
-5. 🌐 **Add Greek/English toggle** - Use label_el/label_en fields
+2. 🚀 **Integrate with Next.js** - See [docs/guides/fossapp-integration.md](docs/guides/fossapp-integration.md) for complete integration guide
+3. 🎨 **Build UI components** - See [docs/architecture/ui-components.md](docs/architecture/ui-components.md) for React component documentation
+4. 📊 **Maintenance operations** - See [docs/guides/maintenance.md](docs/guides/maintenance.md) for daily/weekly/monthly tasks
+5. 📚 **Full architecture reference** - See [docs/reference/search-schema-complete-guide.md](docs/reference/search-schema-complete-guide.md)
+6. 🔍 **SQL functions reference** - See [docs/reference/sql-functions.md](docs/reference/sql-functions.md)
+7. 🌐 **Add Greek/English toggle** - Use label_el/label_en fields in taxonomy and filter definitions
 
 ---
 
