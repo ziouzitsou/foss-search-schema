@@ -50,10 +50,11 @@ This repository contains a **complete, working product search system** for the F
 - Data flow diagrams
 - Design principles and patterns
 
-**ui-components.md** - React component architecture (TBD)
-- FilterPanel, FacetedCategoryNavigation
-- Component props and state management
-- Integration patterns
+**ui-components.md** - React component architecture ✅ Complete (947 lines)
+- FilterPanel, FacetedCategoryNavigation, ActiveFilters
+- Component hierarchy and data flow diagrams
+- Props, state management, TypeScript interfaces
+- Integration patterns with code examples
 
 ### 📚 Implementation Guides (`docs/guides/`)
 
@@ -69,11 +70,21 @@ This repository contains a **complete, working product search system** for the F
 - Phase 1 (deployed), Phase 2 (ready), Phase 3 (documented)
 - UI component details
 
-**dynamic-facets.md** - Context-aware filtering
-- How dynamic facets work
-- `get_dynamic_facets()` function
-- Performance considerations
-- UI integration examples
+**dynamic-facets.md** - Context-aware filtering ✅ Complete (678 lines)
+- How dynamic facets work (with before/after examples)
+- `get_dynamic_facets()` and `get_filter_facets_with_context()` functions
+- Performance considerations (<100ms target)
+- UI integration examples with code
+- Troubleshooting guide
+
+**maintenance.md** - Operations guide ✅ Complete (959 lines)
+- Daily/weekly/monthly maintenance tasks
+- Materialized view refresh procedures
+- Performance optimization techniques
+- Comprehensive troubleshooting section
+- Schema updates (add taxonomy, filters)
+- Backup and recovery procedures
+- Data quality checks
 
 **mcp-installation.md** - MCP server setup
 
@@ -87,9 +98,20 @@ This repository contains a **complete, working product search system** for the F
 - Function signatures
 - Next.js integration code examples
 
-**sql-functions.md** - RPC function reference (TBD)
-- All 7 functions documented
-- Parameters, return types, examples
+**sql-functions.md** - RPC function reference ✅ Complete (621 lines)
+- All 7 functions fully documented
+- Function signatures with parameter descriptions
+- Return types and field descriptions
+- TypeScript integration examples
+- Usage patterns and error handling
+
+**filter-types.md** - Filter types reference ✅ Complete (1,108 lines)
+- Boolean, Multi-Select, and Range filter patterns
+- ETIM type mapping (A, L, N, R → filter types)
+- Database schema for each type
+- React component implementation patterns
+- Step-by-step guide for adding new filters
+- Best practices and testing checklists
 
 **public-wrappers.md** - Public schema wrapper explanation
 
@@ -102,6 +124,23 @@ This repository contains a **complete, working product search system** for the F
 - Execution order
 - Verification queries
 - Bug fixes history
+
+### 🚀 Reference Implementation (`search-test-app/`)
+
+**README.md** - Production-ready v2.5 guide ✅ Enhanced (625 lines)
+- Complete feature documentation (18 filters, dynamic facets, taxonomy)
+- Architecture diagrams (3-column layout, component hierarchy, data flow)
+- Database integration (all 5 RPC functions with code examples)
+- Testing guide (6 comprehensive scenarios)
+- Current statistics and performance metrics
+- Troubleshooting and development setup
+- Links to all related documentation
+
+**Component Files**:
+- app/page.tsx (592 lines) - Main search interface
+- components/FilterPanel.tsx (319 lines) - Delta Light filter container
+- components/FacetedCategoryNavigation.tsx (342 lines) - Taxonomy tree
+- components/filters/ - Boolean, MultiSelect, Range filter components
 
 ### 🗄️ Archive (`docs/archive/`)
 
@@ -711,13 +750,38 @@ When working with this repository:
 
 ## Notes for Claude Code
 
-- This is **documentation only** - no code to run directly
-- SQL must be extracted and executed in Supabase SQL Editor
+### Working Application Status
+
+- This is a **WORKING v2.5 production-ready search system**, not just documentation
+- **search-test-app** is fully functional at http://localhost:3001 (Next.js 15.5.6)
+- 16 SQL files in `sql/` folder ready to deploy
+- 7 RPC functions already deployed to Supabase
+- All 18 Delta Light filters implemented and tested
+
+### Recent Major Changes (November 19, 2025)
+
+**Documentation Reorganization**:
+- Created git tag `v2.5-pre-docs-reorganization` as backup
+- Reorganized 21 files into docs/architecture, docs/guides, docs/reference folders
+- Created 4 new comprehensive documentation files (3,635 lines total)
+- Enhanced QUICKSTART.md and search-test-app/README.md
+- All changes committed and pushed to GitHub
+
+**New Documentation Files**:
+1. docs/architecture/ui-components.md (947 lines) - Complete React component guide
+2. docs/reference/sql-functions.md (621 lines) - All 7 RPC functions documented
+3. docs/guides/maintenance.md (959 lines) - Operations and troubleshooting guide
+4. docs/reference/filter-types.md (1,108 lines) - Filter implementation patterns
+
+### Implementation Guidance
+
+- SQL files are ready to use (in `sql/` folder, numbered 00-09)
 - Always verify ETIM Feature IDs match the target database before using SQL
-- The 4 SQL files referenced don't exist - must be created from guide
 - When asked about implementation, refer to QUICKSTART.md first
-- When asked about architecture/design, refer to search-schema-complete-guide.md
-- Integration examples are for reference - actual paths may differ in FOSSAPP
+- When asked about architecture/design, refer to docs/architecture/overview.md
+- When asked about UI components, refer to docs/architecture/ui-components.md
+- When asked about operations, refer to docs/guides/maintenance.md
+- Integration examples in docs/guides/fossapp-integration.md
 
 ---
 
@@ -730,10 +794,17 @@ When working with this repository:
 
 ---
 
-**Last Updated**: 2025-11-03
-**Repository Purpose**: Documentation for search schema implementation
+**Last Updated**: 2025-11-19 (Documentation reorganization completed)
+**Repository Purpose**: Complete v2.5 working search system + comprehensive documentation
 **Target Database**: Supabase PostgreSQL (14,889+ products)
+**Running App**: http://localhost:3001 (search-test-app)
 **Implementation Time**: 30 minutes (quickstart) to 2-3 hours (full customization)
+
+**Recent Updates**:
+- November 19, 2025: Complete documentation reorganization + 4 new reference docs
+- November 15, 2025: Dynamic facets implementation + Delta Light filters
+- November 8-12, 2025: Multi-taxonomy filtering + SQL functions
+- November 3-8, 2025: Initial schema, taxonomy, classification
 - INSTRUCTION: Playwright MCP Screenshot Workaround
 
   When taking screenshots or inspecting web pages with Playwright MCP:
