@@ -100,22 +100,33 @@ export default function SearchPage() {
   useEffect(() => {
     console.log('🔍 Search triggered by filter change:', {
       selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible,
-      trimless, cutShapeRound, cutShapeRectangular
+      trimless, cutShapeRound, cutShapeRectangular, activeFilters
     })
     handleSearch()
-  }, [selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular, JSON.stringify(activeFilters)]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Load flag counts when selectedTaxonomies changes
+  // Load dynamic flag counts based on current filters
+  // This updates whenever filters change, showing only available options
   useEffect(() => {
     const loadFlagCounts = async () => {
-      if (selectedTaxonomies.length === 0) {
+      const combinedTaxonomies = getCombinedTaxonomies()
+      if (!combinedTaxonomies) {
         setFlagCounts({})
         return
       }
 
       try {
-        const { data, error } = await supabase.rpc('get_boolean_flag_counts', {
-          p_taxonomy_codes: selectedTaxonomies
+        // Call the dynamic facets function with current filter selections
+        const { data, error } = await supabase.rpc('get_filter_facets_with_context', {
+          p_query: query || null,
+          p_taxonomy_codes: combinedTaxonomies,
+          p_suppliers: suppliers.length > 0 ? suppliers : null,
+          p_indoor: indoor,
+          p_outdoor: outdoor,
+          p_submersible: submersible,
+          p_trimless: trimless,
+          p_cut_shape_round: cutShapeRound,
+          p_cut_shape_rectangular: cutShapeRectangular
         })
 
         if (error) throw error
@@ -129,13 +140,14 @@ export default function SearchPage() {
           }
         })
         setFlagCounts(countsMap)
+        console.log('✅ Dynamic facet counts loaded:', countsMap)
       } catch (error) {
-        console.error('Error loading flag counts:', error)
+        console.error('Error loading dynamic facet counts:', error)
       }
     }
 
     loadFlagCounts()
-  }, [selectedTaxonomies])
+  }, [selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular, query]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFilterChange = useCallback((filters: any) => {
     setActiveFilters(filters)
@@ -308,6 +320,14 @@ export default function SearchPage() {
                 onFilterChange={handleFilterChange}
                 taxonomyCode={activeTab}
                 selectedTaxonomies={selectedTaxonomies}
+                indoor={indoor}
+                outdoor={outdoor}
+                submersible={submersible}
+                trimless={trimless}
+                cutShapeRound={cutShapeRound}
+                cutShapeRectangular={cutShapeRectangular}
+                query={query || null}
+                suppliers={suppliers}
               />
             </div>
           )}
@@ -454,6 +474,20 @@ export default function SearchPage() {
               <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                 {product.foss_pid}
               </div>
+              {product.image_url && (
+                <div style={{ marginBottom: '10px', height: '200px', overflow: 'hidden', borderRadius: '4px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img
+                    src={product.image_url}
+                    alt={product.foss_pid}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center'
+                    }}
+                  />
+                </div>
+              )}
               <div style={{ fontSize: '14px', marginBottom: '10px' }}>
                 {product.description_short}
               </div>

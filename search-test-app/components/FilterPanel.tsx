@@ -21,9 +21,29 @@ export type FilterPanelProps = {
   onFilterChange: (filters: FilterState) => void
   taxonomyCode?: string
   selectedTaxonomies?: string[]
+  indoor?: boolean | null
+  outdoor?: boolean | null
+  submersible?: boolean | null
+  trimless?: boolean | null
+  cutShapeRound?: boolean | null
+  cutShapeRectangular?: boolean | null
+  query?: string | null
+  suppliers?: string[]
 }
 
-export default function FilterPanel({ onFilterChange, taxonomyCode = 'LUMINAIRE', selectedTaxonomies = [] }: FilterPanelProps) {
+export default function FilterPanel({
+  onFilterChange,
+  taxonomyCode = 'LUMINAIRE',
+  selectedTaxonomies = [],
+  indoor = null,
+  outdoor = null,
+  submersible = null,
+  trimless = null,
+  cutShapeRound = null,
+  cutShapeRectangular = null,
+  query = null,
+  suppliers = []
+}: FilterPanelProps) {
   const [filterDefinitions, setFilterDefinitions] = useState<FilterDefinition[]>([])
   const [filterFacets, setFilterFacets] = useState<FilterFacet[]>([])
   const [filterState, setFilterState] = useState<FilterState>({})
@@ -33,9 +53,22 @@ export default function FilterPanel({ onFilterChange, taxonomyCode = 'LUMINAIRE'
   const [loading, setLoading] = useState(true)
 
   // Load filter definitions and facets
+  // Reload when taxonomy, selected taxonomies, OR context flags change
+  // This ensures technical filter counts update based on user selections
   useEffect(() => {
     loadFilters()
-  }, [taxonomyCode, selectedTaxonomies])
+  }, [
+    taxonomyCode,
+    selectedTaxonomies.join(','),
+    indoor,
+    outdoor,
+    submersible,
+    trimless,
+    cutShapeRound,
+    cutShapeRectangular,
+    query,
+    suppliers.join(',')
+  ])
 
   const loadFilters = async () => {
     try {
@@ -49,13 +82,27 @@ export default function FilterPanel({ onFilterChange, taxonomyCode = 'LUMINAIRE'
 
       if (defError) throw defError
 
-      // Get DYNAMIC filter facets based on selected taxonomies
+      // Get DYNAMIC filter facets based on selected taxonomies AND all current filter selections
       const { data: facets, error: facetsError } = await supabase
         .rpc('get_dynamic_facets', {
-          p_taxonomy_codes: selectedTaxonomies.length > 0 ? selectedTaxonomies : null
+          p_taxonomy_codes: selectedTaxonomies.length > 0 ? selectedTaxonomies : null,
+          p_filters: null, // Technical filters handled separately by design
+          p_suppliers: suppliers.length > 0 ? suppliers : null,
+          p_indoor: indoor,
+          p_outdoor: outdoor,
+          p_submersible: submersible,
+          p_trimless: trimless,
+          p_cut_shape_round: cutShapeRound,
+          p_cut_shape_rectangular: cutShapeRectangular,
+          p_query: query
         })
 
       if (facetsError) throw facetsError
+
+      console.log('✅ Dynamic technical filter facets loaded with context:', {
+        taxonomyCodes: selectedTaxonomies,
+        indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular
+      })
 
       setFilterDefinitions(definitions || [])
       setFilterFacets(facets || [])
@@ -142,28 +189,41 @@ export default function FilterPanel({ onFilterChange, taxonomyCode = 'LUMINAIRE'
 
   if (loading) {
     return (
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <div className="animate-pulse">Loading filters...</div>
+      <div className="bg-gradient-to-br from-slate-50 to-white p-6 rounded-xl shadow-lg border border-slate-200">
+        <div className="animate-pulse flex items-center gap-2 text-slate-600">
+          <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce"></div>
+          Loading filters...
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm">
+    <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-lg border border-slate-200">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-bold text-lg">
-          Filters {getActiveFilterCount() > 0 && `(${getActiveFilterCount()})`}
-        </h3>
-        {getActiveFilterCount() > 0 && (
-          <button
-            onClick={clearAllFilters}
-            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
-          >
-            <X size={14} />
-            Clear All
-          </button>
-        )}
+      <div className="px-6 py-4 border-b border-slate-200 bg-white rounded-t-xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
+            <h3 className="font-bold text-xl text-slate-800">
+              Technical Filters
+            </h3>
+            {getActiveFilterCount() > 0 && (
+              <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                {getActiveFilterCount()}
+              </span>
+            )}
+          </div>
+          {getActiveFilterCount() > 0 && (
+            <button
+              onClick={clearAllFilters}
+              className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors font-medium"
+            >
+              <X size={16} />
+              Clear All
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filter Categories */}
@@ -247,8 +307,11 @@ export default function FilterPanel({ onFilterChange, taxonomyCode = 'LUMINAIRE'
       ))}
 
       {filterDefinitions.length === 0 && (
-        <div className="text-sm text-gray-500 text-center py-4">
-          No filters available for this category
+        <div className="px-6 py-8 text-center">
+          <div className="text-slate-400 text-sm">
+            <div className="mb-2">🔍</div>
+            No filters available for this category
+          </div>
         </div>
       )}
     </div>
