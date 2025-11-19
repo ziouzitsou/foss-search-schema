@@ -53,11 +53,22 @@ export default function FilterPanel({
   const [loading, setLoading] = useState(true)
 
   // Load filter definitions and facets
-  // Only reload when taxonomy or selected taxonomies change
-  // (Don't reload on every flag change to avoid excessive API calls)
+  // Reload when taxonomy, selected taxonomies, OR context flags change
+  // This ensures technical filter counts update based on user selections
   useEffect(() => {
     loadFilters()
-  }, [taxonomyCode, selectedTaxonomies.join(',')])
+  }, [
+    taxonomyCode,
+    selectedTaxonomies.join(','),
+    indoor,
+    outdoor,
+    submersible,
+    trimless,
+    cutShapeRound,
+    cutShapeRectangular,
+    query,
+    suppliers.join(',')
+  ])
 
   const loadFilters = async () => {
     try {
