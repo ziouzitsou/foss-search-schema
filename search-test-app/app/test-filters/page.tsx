@@ -18,13 +18,12 @@ export default function TestFiltersPage() {
       setLoading(true)
       setError(null)
 
-      // Test 1: Get filter definitions
-      console.log('Testing filter_definitions...')
+      // Test 1: Get filter definitions using RPC function
+      console.log('Testing get_filter_definitions_with_type...')
       const { data: defs, error: defError } = await supabase
-        .from('filter_definitions')
-        .select('*')
-        .eq('active', true)
-        .order('display_order')
+        .rpc('get_filter_definitions_with_type', {
+          p_taxonomy_code: null // Get all definitions regardless of taxonomy
+        })
 
       if (defError) {
         console.error('Filter definitions error:', defError)
@@ -34,12 +33,21 @@ export default function TestFiltersPage() {
       console.log('Filter definitions:', defs)
       setFilterDefs(defs || [])
 
-      // Test 2: Get filter facets
-      console.log('Testing filter_facets...')
+      // Test 2: Get dynamic facets using RPC function
+      console.log('Testing get_dynamic_facets...')
       const { data: facetsData, error: facetsError } = await supabase
-        .from('filter_facets')
-        .select('*')
-        .limit(10)
+        .rpc('get_dynamic_facets', {
+          p_taxonomy_codes: null,
+          p_filters: {},
+          p_suppliers: null,
+          p_indoor: null,
+          p_outdoor: null,
+          p_submersible: null,
+          p_trimless: null,
+          p_cut_shape_round: null,
+          p_cut_shape_rectangular: null,
+          p_query: null
+        })
 
       if (facetsError) {
         console.error('Filter facets error:', facetsError)
@@ -47,7 +55,8 @@ export default function TestFiltersPage() {
       }
 
       console.log('Filter facets:', facetsData)
-      setFacets(facetsData || [])
+      // Limit to first 10 for display
+      setFacets(facetsData?.slice(0, 10) || [])
 
     } catch (err: any) {
       console.error('Test failed:', err)
@@ -82,23 +91,26 @@ export default function TestFiltersPage() {
 
           <div className="bg-white border p-4 rounded">
             <h2 className="font-bold mb-2">Filter Definitions ({filterDefs.length})</h2>
+            <div className="text-xs text-gray-500 mb-2">via RPC: get_filter_definitions_with_type</div>
             <div className="space-y-2">
-              {filterDefs.map(def => (
-                <div key={def.filter_key} className="text-sm p-2 bg-gray-50 rounded">
-                  <strong>{def.label}</strong> ({def.filter_type})
-                  <span className="text-gray-500 ml-2">- {def.ui_config?.filter_category}</span>
+              {filterDefs.map((def, idx) => (
+                <div key={idx} className="text-sm p-2 bg-gray-50 rounded">
+                  <strong>{def.label || def.filter_label}</strong> ({def.filter_type})
+                  <span className="text-gray-500 ml-2">- {def.filter_category || def.ui_config?.filter_category}</span>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="bg-white border p-4 rounded">
-            <h2 className="font-bold mb-2">Filter Facets (first 10)</h2>
+            <h2 className="font-bold mb-2">Dynamic Facets (first 10)</h2>
+            <div className="text-xs text-gray-500 mb-2">via RPC: get_dynamic_facets</div>
             <div className="space-y-2">
               {facets.map((facet, idx) => (
                 <div key={idx} className="text-sm p-2 bg-gray-50 rounded">
-                  <strong>{facet.filter_label}:</strong> {facet.filter_value}
+                  <strong>{facet.filter_key}:</strong> {facet.filter_value}
                   <span className="text-gray-500 ml-2">({facet.product_count} products)</span>
+                  <span className="text-xs text-blue-600 ml-2">[{facet.filter_category}]</span>
                 </div>
               ))}
             </div>
