@@ -188,21 +188,11 @@ export default function FacetedCategoryNavigation({
     return (
       <div key={node.code} style={{ marginLeft: depth > 0 ? '20px' : '0' }}>
         <label
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '6px 8px',
-            cursor: 'pointer',
-            borderRadius: '4px',
-            transition: 'background-color 0.2s',
-            backgroundColor: isSelected ? '#e0f2fe' : 'transparent'
-          }}
-          onMouseEnter={(e) => {
-            if (!isSelected) e.currentTarget.style.backgroundColor = '#f0f9ff'
-          }}
-          onMouseLeave={(e) => {
-            if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent'
-          }}
+          className={`flex items-center px-3 py-2 cursor-pointer rounded-lg transition-all duration-200
+            ${isSelected
+              ? 'bg-blue-100 border-blue-300 shadow-sm'
+              : 'hover:bg-slate-50'
+            }`}
         >
           <input
             type="checkbox"
@@ -211,23 +201,18 @@ export default function FacetedCategoryNavigation({
               if (el) el.indeterminate = isIndeterminate
             }}
             onChange={(e) => handleCheckboxChange(node, e.target.checked)}
-            style={{
-              marginRight: '8px',
-              cursor: 'pointer',
-              width: '16px',
-              height: '16px'
-            }}
+            className="mr-3 cursor-pointer"
           />
-          {icon && <span style={{ marginRight: '6px', fontSize: '16px' }}>{icon}</span>}
-          <span style={{ flex: 1, fontSize: '14px', color: '#1f2937' }}>
+          {icon && <span className="mr-2 text-base">{icon}</span>}
+          <span className="flex-1 text-sm text-slate-800 font-medium">
             {node.name}
           </span>
-          <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px' }}>
-            ({node.product_count.toLocaleString()})
+          <span className="text-xs text-slate-500 ml-2 bg-slate-100 px-2 py-0.5 rounded-full">
+            {node.product_count.toLocaleString()}
           </span>
         </label>
         {node.children.length > 0 && (
-          <div style={{ marginTop: '2px' }}>
+          <div className="mt-1 space-y-1">
             {node.children.map(child => renderNode(child, depth + 1))}
           </div>
         )}
@@ -248,68 +233,46 @@ export default function FacetedCategoryNavigation({
 
   if (loading) {
     return (
-      <div style={{ padding: '16px', textAlign: 'center', color: '#6b7280' }}>
-        Loading categories...
+      <div className="p-6 text-center">
+        <div className="animate-pulse flex items-center justify-center gap-2 text-slate-600">
+          <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+          <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+        </div>
+        <p className="text-sm text-slate-600 mt-3">Loading categories...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div style={{ padding: '16px' }}>
-        <p style={{ color: '#dc2626', marginBottom: '8px' }}>Error loading categories: {error}</p>
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-3">
+          <p className="text-red-700 text-sm">
+            <strong>Error:</strong> {error}
+          </p>
+        </div>
         <button
           onClick={loadTaxonomy}
-          style={{
-            padding: '6px 12px',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg
+                     font-medium transition-colors duration-200"
         >
-          Retry
+          Retry Loading
         </button>
       </div>
     )
   }
 
   return (
-    <div style={{
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
-      backgroundColor: 'white',
-      padding: '16px'
-    }}>
+    <div className="space-y-3">
       {/* Header - only show if there are selections */}
       {selectedCodes.size > 0 && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          marginBottom: '12px',
-          paddingBottom: '12px',
-          borderBottom: '1px solid #e5e7eb'
-        }}>
+        <div className="flex justify-end items-center pb-3 border-b border-slate-200">
           <button
             onClick={clearAll}
-            style={{
-              padding: '4px 8px',
-              fontSize: '12px',
-              color: '#3b82f6',
-              backgroundColor: 'transparent',
-              border: '1px solid #3b82f6',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#eff6ff'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent'
-            }}
+            className="px-3 py-1.5 text-xs text-blue-600 bg-white hover:bg-blue-50
+                       border border-blue-300 rounded-lg transition-colors duration-200
+                       font-medium"
           >
             Clear all ({selectedCodes.size})
           </button>
@@ -317,24 +280,22 @@ export default function FacetedCategoryNavigation({
       )}
 
       {/* Level 1 Categories */}
-      <div>
-        <div style={{ marginBottom: '4px' }}>
-          {level1Nodes.map(node => renderNode(node))}
-        </div>
+      <div className="space-y-1">
+        {level1Nodes.map(node => renderNode(node))}
       </div>
 
       {/* Auto-search indicator */}
       {autoSearch && selectedCodes.size > 0 && (
-        <div style={{
-          marginTop: '12px',
-          padding: '8px',
-          backgroundColor: '#f0f9ff',
-          borderRadius: '4px',
-          fontSize: '12px',
-          color: '#0369a1',
-          textAlign: 'center'
-        }}>
-          🔍 Auto-searching with {selectedCodes.size} {selectedCodes.size === 1 ? 'category' : 'categories'}...
+        <div className="mt-3 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center justify-center gap-2 text-xs text-blue-700">
+            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span className="font-medium">
+              Auto-searching with {selectedCodes.size} {selectedCodes.size === 1 ? 'category' : 'categories'}
+            </span>
+          </div>
         </div>
       )}
     </div>
