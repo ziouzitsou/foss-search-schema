@@ -5,6 +5,16 @@
 **UI**: search-test-app Next.js
 **Status**: ✅ Fully Implemented and Working
 
+> **⚠️ ARCHIVED DOCUMENTATION NOTE (2025-01-21)**
+>
+> This is historical documentation from November 15, 2025. The SQL code examples in this document contain a bug in the range filter implementation (lines 142-143) that was fixed on January 21, 2025.
+>
+> **Bug**: Range filter checks used `NOT (p_filters->'cct' ? 'min')` pattern, which returns NULL (not TRUE) for empty JSONB objects, causing WHERE clause failures.
+>
+> **Fix**: Changed to `p_filters->'cct'->>'min' IS NULL` pattern to properly handle empty objects.
+>
+> **Reference**: See commit b5cbf6f and current implementation in `sql/08-add-dynamic-filter-search.sql`
+
 ---
 
 ## Summary
