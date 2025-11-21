@@ -2,10 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { BarChart3, Lightbulb } from 'lucide-react'
 import FacetedCategoryNavigation from '@/components/FacetedCategoryNavigation'
 import ActiveFilters from '@/components/ActiveFilters'
 import ProductTabs from '@/components/ProductTabs'
 import FilterPanel from '@/components/FilterPanel'
+import ProductCard from '@/components/ProductCard'
+import ProductCardSkeleton from '@/components/ProductCardSkeleton'
+import EmptyState from '@/components/EmptyState'
+import SystemStatsModal from '@/components/SystemStatsModal'
+import CustomCheckbox from '@/components/CustomCheckbox'
+import { Home, TreePine, Droplet, Scissors, Circle, Square } from 'lucide-react'
 
 type Product = {
   product_id: string
@@ -54,6 +61,7 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [stats, setStats] = useState<any>(null)
+  const [showStatsModal, setShowStatsModal] = useState(false)
   const [limit, setLimit] = useState(24)
   const [hasMore, setHasMore] = useState(false)
   const [totalCount, setTotalCount] = useState<number | null>(null)
@@ -269,6 +277,7 @@ export default function SearchPage() {
         data.map((item: any) => [item.stat_name, item.stat_value])
       )
       setStats(statsObj)
+      setShowStatsModal(true)
     } catch (err) {
       console.error('Stats error:', err)
     }
@@ -290,156 +299,175 @@ export default function SearchPage() {
     )
   }
 
+  const hasAnyFilters = selectedTaxonomies.length > 0 || suppliers.length > 0 || indoor !== null || outdoor !== null || submersible !== null || trimless !== null || cutShapeRound !== null || cutShapeRectangular !== null || Object.keys(activeFilters).length > 0
+
   return (
-    <div className="p-5 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">🔍 Foss SA Search Test</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+        <div className="max-w-[1600px] mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo and Title */}
+            <div className="flex items-center gap-4">
+              <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 rounded-xl shadow-lg">
+                <Lightbulb className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                  Foss SA
+                </h1>
+                <p className="text-sm text-slate-500">Lighting Product Search</p>
+              </div>
+            </div>
 
-      <button onClick={loadStats} className="mb-4 bg-blue-600 text-white px-5 py-2.5 rounded font-bold hover:bg-blue-700">
-        Load System Stats
-      </button>
-
-      {stats && (
-        <div className="bg-blue-50 p-5 rounded-lg mb-5 shadow-sm">
-          <h3 className="text-xl font-bold mb-3">📊 System Statistics</h3>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2.5">
-            <div><strong>Total Products:</strong> {stats.total_products}</div>
-            <div><strong>Indoor:</strong> {stats.indoor_products}</div>
-            <div><strong>Outdoor:</strong> {stats.outdoor_products}</div>
-            <div><strong>Dimmable:</strong> {stats.dimmable_products}</div>
-            <div><strong>Filter Entries:</strong> {stats.filter_entries}</div>
-            <div><strong>Taxonomy Nodes:</strong> {stats.taxonomy_nodes}</div>
+            {/* Stats Button */}
+            <button
+              onClick={loadStats}
+              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all"
+            >
+              <BarChart3 size={18} />
+              <span className="hidden sm:inline">System Stats</span>
+            </button>
           </div>
         </div>
+      </header>
+
+      {/* Stats Modal */}
+      {stats && showStatsModal && (
+        <SystemStatsModal stats={stats} onClose={() => setShowStatsModal(false)} />
       )}
 
-      <ProductTabs onTabChange={handleTabChange}>
-        {/* Three-Column Layout: Categories (left), Delta-Style Filters (middle), Location/Options (right) */}
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-          {/* Left Column: Fixation Categories */}
-          <div style={{ flex: '1', minWidth: '250px', maxWidth: '300px' }}>
-            <FacetedCategoryNavigation
-              onSelectTaxonomies={handleTaxonomiesChange}
-              autoSearch={true}
-              debounceMs={300}
-              rootCode={activeTab}
-            />
-          </div>
-
-          {/* Middle Column: Delta-Style Filters (Only shown when category is selected) */}
-          {activeTab === 'LUMINAIRE' && selectedTaxonomies.length > 0 && (
-            <div style={{ flex: '1', minWidth: '300px', maxWidth: '400px' }}>
-              <FilterPanel
-                onFilterChange={handleFilterChange}
-                taxonomyCode={activeTab}
-                selectedTaxonomies={selectedTaxonomies}
-                indoor={indoor}
-                outdoor={outdoor}
-                submersible={submersible}
-                trimless={trimless}
-                cutShapeRound={cutShapeRound}
-                cutShapeRectangular={cutShapeRectangular}
-                query={query || null}
-                suppliers={suppliers}
+      {/* Main Content */}
+      <div className="max-w-[1800px] mx-auto px-6 py-8">
+        <ProductTabs onTabChange={handleTabChange}>
+          {/* Three-Column Layout: Categories | Technical Filters | Location & Options */}
+          <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
+            {/* Column 1: Categories */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <FacetedCategoryNavigation
+                onSelectTaxonomies={handleTaxonomiesChange}
+                autoSearch={true}
+                debounceMs={300}
+                rootCode={activeTab}
               />
             </div>
-          )}
 
-          {/* Right Column: Location & Options (Only shown when category is selected) */}
-          {activeTab === 'LUMINAIRE' && selectedTaxonomies.length > 0 && (
-            <div style={{ flex: '1', minWidth: '250px', maxWidth: '300px' }}>
-              {/* Location Toggle Switches */}
-              <div style={{ marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>Location</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={indoor === true}
-                      onChange={(e) => setIndoor(e.target.checked ? true : null)}
-                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
-                    />
-                    <span>Indoor {flagCounts.indoor && `(${flagCounts.indoor.true_count.toLocaleString()})`}</span>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={outdoor === true}
-                      onChange={(e) => setOutdoor(e.target.checked ? true : null)}
-                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
-                    />
-                    <span>Outdoor {flagCounts.outdoor && `(${flagCounts.outdoor.true_count.toLocaleString()})`}</span>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={submersible === true}
-                      onChange={(e) => setSubmersible(e.target.checked ? true : null)}
-                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
-                    />
-                    <span>Submersible {flagCounts.submersible && `(${flagCounts.submersible.true_count.toLocaleString()})`}</span>
-                  </label>
+            {/* Column 2: Technical Filters */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {activeTab === 'LUMINAIRE' && selectedTaxonomies.length > 0 ? (
+                <FilterPanel
+                  onFilterChange={handleFilterChange}
+                  taxonomyCode={activeTab}
+                  selectedTaxonomies={selectedTaxonomies}
+                  indoor={indoor}
+                  outdoor={outdoor}
+                  submersible={submersible}
+                  trimless={trimless}
+                  cutShapeRound={cutShapeRound}
+                  cutShapeRectangular={cutShapeRectangular}
+                  query={query || null}
+                  suppliers={suppliers}
+                />
+              ) : (
+                <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-lg border border-slate-200 p-8 text-center">
+                  <div className="text-slate-400 text-sm">
+                    <div className="mb-2">🔍</div>
+                    Select a category to see technical filters
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Column 3: Location & Options */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {/* Location Section */}
+              <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-lg border border-slate-200 p-6" style={{ marginBottom: '24px' }}>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-green-500 rounded-full"></div>
+                  <h3 className="font-bold text-lg text-slate-800">Location</h3>
+                </div>
+                <div className="space-y-3">
+                  <CustomCheckbox
+                    checked={indoor === true}
+                    onChange={(checked) => setIndoor(checked ? true : null)}
+                    label="Indoor"
+                    count={flagCounts.indoor?.true_count}
+                    icon={Home}
+                  />
+                  <CustomCheckbox
+                    checked={outdoor === true}
+                    onChange={(checked) => setOutdoor(checked ? true : null)}
+                    label="Outdoor"
+                    count={flagCounts.outdoor?.true_count}
+                    icon={TreePine}
+                  />
+                  <CustomCheckbox
+                    checked={submersible === true}
+                    onChange={(checked) => setSubmersible(checked ? true : null)}
+                    label="Submersible"
+                    count={flagCounts.submersible?.true_count}
+                    icon={Droplet}
+                  />
                 </div>
               </div>
 
               {/* Options Section */}
-              <div style={{ marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>Options</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={trimless === true}
-                      onChange={(e) => setTrimless(e.target.checked ? true : null)}
-                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
-                    />
-                    <span>Trimless {flagCounts.trimless && `(${flagCounts.trimless.true_count.toLocaleString()})`}</span>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={cutShapeRound === true}
-                      onChange={(e) => setCutShapeRound(e.target.checked ? true : null)}
-                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
-                    />
-                    <span>Cut Shape: Round {flagCounts.cut_shape_round && `(${flagCounts.cut_shape_round.true_count.toLocaleString()})`}</span>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={cutShapeRectangular === true}
-                      onChange={(e) => setCutShapeRectangular(e.target.checked ? true : null)}
-                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
-                    />
-                    <span>Cut Shape: Rectangular {flagCounts.cut_shape_rectangular && `(${flagCounts.cut_shape_rectangular.true_count.toLocaleString()})`}</span>
-                  </label>
+              <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-lg border border-slate-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-purple-500 rounded-full"></div>
+                  <h3 className="font-bold text-lg text-slate-800">Options</h3>
+                </div>
+                <div className="space-y-3">
+                  <CustomCheckbox
+                    checked={trimless === true}
+                    onChange={(checked) => setTrimless(checked ? true : null)}
+                    label="Trimless"
+                    count={flagCounts.trimless?.true_count}
+                    icon={Scissors}
+                  />
+                  <CustomCheckbox
+                    checked={cutShapeRound === true}
+                    onChange={(checked) => setCutShapeRound(checked ? true : null)}
+                    label="Round Cut"
+                    count={flagCounts.cut_shape_round?.true_count}
+                    icon={Circle}
+                  />
+                  <CustomCheckbox
+                    checked={cutShapeRectangular === true}
+                    onChange={(checked) => setCutShapeRectangular(checked ? true : null)}
+                    label="Rectangular Cut"
+                    count={flagCounts.cut_shape_rectangular?.true_count}
+                    icon={Square}
+                  />
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Search Filters Below */}
-        <div style={cardStyle}>
-          <h2>Search Filters</h2>
+          {/* Supplier Filter Card */}
+          <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-lg border border-slate-200 p-6 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-6 bg-amber-500 rounded-full"></div>
+              <h3 className="font-bold text-lg text-slate-800">Suppliers</h3>
+            </div>
 
-          {/* Supplier Filter */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={labelStyle}>Supplier:</label>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <div className="flex flex-wrap gap-3">
               {['Delta Light', 'Meyer Lighting'].map(supplier => (
-                <label key={supplier} style={{
-                  padding: '5px 10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  background: suppliers.includes(supplier) ? '#3b82f6' : 'white',
-                  color: suppliers.includes(supplier) ? 'white' : 'black',
-                  cursor: 'pointer'
-                }}>
+                <label
+                  key={supplier}
+                  className={`
+                    flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all font-medium
+                    ${suppliers.includes(supplier)
+                      ? 'bg-blue-500 text-white border-blue-600 shadow-md'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                    }
+                  `}
+                >
                   <input
                     type="checkbox"
                     checked={suppliers.includes(supplier)}
                     onChange={() => toggleSupplier(supplier)}
-                    style={{ marginRight: '5px' }}
+                    className="sr-only"
                   />
                   {supplier}
                 </label>
@@ -447,158 +475,91 @@ export default function SearchPage() {
             </div>
           </div>
 
-        {/* Auto-filtering enabled - no manual search button needed */}
-        {loading && (
-          <div style={{ textAlign: 'center', color: '#3b82f6', fontStyle: 'italic', marginTop: '10px' }}>
-            ⚡ Searching...
-          </div>
-        )}
-      </div>
-
-      {/* Error Display */}
-      {error && (
-        <div style={{ ...cardStyle, background: '#fee2e2', color: '#991b1b' }}>
-          <strong>Error:</strong> {error}
-        </div>
-      )}
-
-      {/* Active Filter Chips */}
-      <ActiveFilters
-        selectedTaxonomyCodes={selectedTaxonomies}
-        onRemoveTaxonomy={handleRemoveTaxonomy}
-        onClearAll={handleClearAllTaxonomies}
-      />
-
-      {/* Results */}
-      <div style={{ marginTop: '20px' }}>
-        <h2>
-          Results ({products.length}{hasMore ? '+' : ''})
-          {totalCount !== null && ` of total ${totalCount}`}
-        </h2>
-
-        {products.length === 0 && !loading && (
-          <p style={{ color: '#666' }}>No products found. Try adjusting your filters.</p>
-        )}
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
-          {products.map((product) => (
-            <div key={product.product_id} style={productCardStyle}>
-              <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                {product.foss_pid}
-              </div>
-              {product.image_url && (
-                <div style={{ marginBottom: '10px', height: '200px', overflow: 'hidden', borderRadius: '4px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img
-                    src={product.image_url}
-                    alt={product.foss_pid}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center'
-                    }}
-                  />
-                </div>
-              )}
-              <div style={{ fontSize: '14px', marginBottom: '10px' }}>
-                {product.description_short}
-              </div>
-              <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>
-                {product.supplier_name} | {product.class_name}
-              </div>
-              {product.price && (
-                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#16a34a', marginBottom: '10px' }}>
-                  €{product.price.toFixed(2)}
-                </div>
-              )}
-
-              {/* Flags */}
-              <div style={{ fontSize: '11px', marginBottom: '5px' }}>
-                {product.flags.indoor && <span style={badgeStyle}>🏠 Indoor</span>}
-                {product.flags.outdoor && <span style={badgeStyle}>🌳 Outdoor</span>}
-                {product.flags.submersible && <span style={badgeStyle}>🌊 Submersible</span>}
-                {product.flags.trimless && <span style={badgeStyle}>✂️ Trimless</span>}
-                {product.flags.cut_shape_round && <span style={badgeStyle}>⭕ Round Cut</span>}
-                {product.flags.cut_shape_rectangular && <span style={badgeStyle}>▭ Rect Cut</span>}
-                {product.flags.ceiling && <span style={badgeStyle}>⬆️ Ceiling</span>}
-                {product.flags.wall && <span style={badgeStyle}>◾ Wall</span>}
-                {product.flags.floor && <span style={badgeStyle}>🔦 Floor</span>}
-                {product.flags.recessed && <span style={badgeStyle}>⬇️ Recessed</span>}
-                {product.flags.surface_mounted && <span style={badgeStyle}>⬛ Surface</span>}
-                {product.flags.suspended && <span style={badgeStyle}>🔗 Suspended</span>}
-              </div>
-
-              {/* Key Features */}
-              <div style={{ fontSize: '11px', color: '#666' }}>
-                {product.key_features.power && <div>⚡ {product.key_features.power}W</div>}
-                {product.key_features.color_temp && <div>🌡️ {product.key_features.color_temp}K</div>}
-                {product.key_features.ip_rating && <div>🛡️ {product.key_features.ip_rating}</div>}
+          {/* Error Display */}
+          {error && (
+            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6 flex items-start gap-3">
+              <div className="text-red-500 font-bold text-lg">⚠</div>
+              <div>
+                <strong className="text-red-800 font-bold">Error:</strong>
+                <p className="text-red-700 mt-1">{error}</p>
               </div>
             </div>
-          ))}
-        </div>
+          )}
 
-        {/* Load More Button */}
-        {hasMore && products.length > 0 && (
-          <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <button onClick={loadMore} disabled={loading} style={buttonStyle}>
-              {loading ? 'Loading...' : 'Load More (24 more)'}
-            </button>
+          {/* Active Filter Chips */}
+          <ActiveFilters
+            selectedTaxonomyCodes={selectedTaxonomies}
+            onRemoveTaxonomy={handleRemoveTaxonomy}
+            onClearAll={handleClearAllTaxonomies}
+          />
+
+          {/* Results Section */}
+          <div className="mt-8">
+            {/* Results Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-slate-800">
+                Products
+                <span className="ml-3 text-lg font-normal text-slate-500">
+                  {loading ? (
+                    <span className="inline-flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                      Searching...
+                    </span>
+                  ) : (
+                    <>
+                      ({products.length}{hasMore ? '+' : ''})
+                      {totalCount !== null && ` of ${totalCount.toLocaleString()}`}
+                    </>
+                  )}
+                </span>
+              </h2>
+            </div>
+
+            {/* Loading Skeletons */}
+            {loading && products.length === 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!loading && products.length === 0 && (
+              <EmptyState hasFilters={hasAnyFilters} />
+            )}
+
+            {/* Product Grid */}
+            {products.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {products.map((product) => (
+                  <ProductCard key={product.product_id} product={product} />
+                ))}
+              </div>
+            )}
+
+            {/* Load More Button */}
+            {hasMore && products.length > 0 && (
+              <div className="flex justify-center mt-12">
+                <button
+                  onClick={loadMore}
+                  disabled={loading}
+                  className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Loading...
+                    </span>
+                  ) : (
+                    'Load More (24 more)'
+                  )}
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </ProductTabs>
       </div>
-      </ProductTabs>
     </div>
   )
-}
-
-const cardStyle = {
-  background: 'white',
-  padding: '20px',
-  borderRadius: '8px',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-  marginBottom: '20px'
-}
-
-const labelStyle = {
-  display: 'block',
-  fontWeight: 'bold',
-  marginBottom: '8px'
-}
-
-const inputStyle = {
-  width: '100%',
-  padding: '8px 12px',
-  border: '1px solid #ddd',
-  borderRadius: '4px',
-  fontSize: '14px'
-}
-
-const buttonStyle = {
-  background: '#3b82f6',
-  color: 'white',
-  padding: '10px 20px',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-  fontSize: '16px',
-  fontWeight: 'bold'
-}
-
-const productCardStyle = {
-  background: 'white',
-  padding: '15px',
-  borderRadius: '8px',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-  border: '1px solid #e5e7eb'
-}
-
-const badgeStyle = {
-  display: 'inline-block',
-  padding: '2px 6px',
-  marginRight: '4px',
-  marginBottom: '4px',
-  background: '#eff6ff',
-  borderRadius: '4px',
-  fontSize: '10px'
 }
