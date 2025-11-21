@@ -517,7 +517,7 @@ export default function SearchPage() {
 
             {/* Loading Skeletons */}
             {loading && products.length === 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '24px' }}>
                 {[...Array(8)].map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))}
@@ -531,7 +531,7 @@ export default function SearchPage() {
 
             {/* Product Grid */}
             {products.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '24px' }}>
                 {products.map((product) => (
                   <ProductCard key={product.product_id} product={product} />
                 ))}

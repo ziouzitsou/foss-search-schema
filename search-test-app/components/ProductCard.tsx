@@ -56,34 +56,19 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group bg-white rounded-xl shadow-md hover:shadow-xl border border-slate-200 overflow-hidden transition-all duration-300 hover:-translate-y-1">
       {/* Image Container with Overlay */}
-      <div className="relative aspect-square bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden" style={{ height: '300px' }}>
         {product.image_url ? (
           <>
             <img
               src={product.image_url}
               alt={product.foss_pid}
-              className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
             />
-            {/* Gradient overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-            {/* View Details button on hover */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <button className="bg-white text-slate-800 px-6 py-2.5 rounded-lg font-semibold shadow-lg hover:bg-slate-50 transition-colors">
-                View Details
-              </button>
-            </div>
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-400">
             <Box size={48} strokeWidth={1} />
-          </div>
-        )}
-
-        {/* Price badge */}
-        {product.price && (
-          <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1.5 rounded-lg font-bold shadow-lg">
-            €{product.price.toFixed(2)}
           </div>
         )}
       </div>
@@ -152,6 +137,15 @@ export default function ProductCard({ product }: ProductCardProps) {
                 +{activeFlags.length - 6}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Price */}
+        {product.price && (
+          <div className="mt-3 pt-3 border-t border-slate-100">
+            <div className="text-lg font-bold text-green-600">
+              €{product.price.toFixed(2)}
+            </div>
           </div>
         )}
       </div>
