@@ -150,6 +150,7 @@ export default function SearchPage() {
   }, [selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular, query]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFilterChange = useCallback((filters: any) => {
+    console.log('📥 page.tsx handleFilterChange received:', filters)
     setActiveFilters(filters)
   }, [])
 
@@ -157,10 +158,16 @@ export default function SearchPage() {
     try {
       const combinedTaxonomies = getCombinedTaxonomies()
       console.log('📊 Calling count RPC with params:', {
+        p_query: query || null,
+        p_filters: activeFilters,
+        p_taxonomy_codes: combinedTaxonomies,
+        p_suppliers: suppliers.length > 0 ? suppliers : null,
         p_indoor: indoor,
         p_outdoor: outdoor,
         p_submersible: submersible,
-        p_taxonomy_codes: combinedTaxonomies
+        p_trimless: trimless,
+        p_cut_shape_round: cutShapeRound,
+        p_cut_shape_rectangular: cutShapeRectangular
       })
       const { data, error } = await supabase.rpc('count_products_with_filters', {
         p_query: query || null,
@@ -202,10 +209,15 @@ export default function SearchPage() {
       // Uses public.search_products_with_filters() with Delta-style filters
       console.log('🔎 Calling search RPC with params:', {
         p_query: query || null,
+        p_filters: activeFilters,
         p_taxonomy_codes: combinedTaxonomies,
+        p_suppliers: suppliers.length > 0 ? suppliers : null,
         p_indoor: indoor,
         p_outdoor: outdoor,
         p_submersible: submersible,
+        p_trimless: trimless,
+        p_cut_shape_round: cutShapeRound,
+        p_cut_shape_rectangular: cutShapeRectangular,
         p_limit: searchLimit + 1
       })
       const { data, error: searchError } = await supabase.rpc('search_products_with_filters', {

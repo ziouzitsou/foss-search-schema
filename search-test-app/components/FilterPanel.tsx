@@ -48,7 +48,7 @@ export default function FilterPanel({
   const [filterFacets, setFilterFacets] = useState<FilterFacet[]>([])
   const [filterState, setFilterState] = useState<FilterState>({})
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-    new Set(['electricals', 'design', 'light_engine'])
+    new Set(['electricals', 'design', 'light_engine', 'other'])
   )
   const [loading, setLoading] = useState(true)
 
@@ -136,6 +136,7 @@ export default function FilterPanel({
       newState[filterKey] = value
     }
 
+    console.log('🔧 FilterPanel updateFilterState:', { filterKey, value, newState })
     setFilterState(newState)
     onFilterChange(newState)
   }
