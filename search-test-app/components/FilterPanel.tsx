@@ -33,7 +33,7 @@ export type FilterPanelProps = {
 
 export default function FilterPanel({
   onFilterChange,
-  taxonomyCode = 'LUMINAIRE',
+  taxonomyCode,  // No default - passed dynamically from parent
   selectedTaxonomies = [],
   indoor = null,
   outdoor = null,
@@ -56,6 +56,7 @@ export default function FilterPanel({
   // Reload when taxonomy, selected taxonomies, OR context flags change
   // This ensures technical filter counts update based on user selections
   useEffect(() => {
+    console.log('🔄 FilterPanel: Taxonomy changed to:', taxonomyCode)
     loadFilters()
   }, [
     taxonomyCode,
@@ -81,6 +82,8 @@ export default function FilterPanel({
         })
 
       if (defError) throw defError
+
+      console.log(`✅ Loaded ${definitions?.length || 0} filter definitions for taxonomy: ${taxonomyCode}`, definitions)
 
       // Get DYNAMIC filter facets based on selected taxonomies AND all current filter selections
       const { data: facets, error: facetsError } = await supabase

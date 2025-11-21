@@ -71,6 +71,7 @@ export default function SearchPage() {
   const [flagCounts, setFlagCounts] = useState<Record<string, { true_count: number, false_count: number }>>({})
 
   const handleTaxonomiesChange = useCallback((codes: string[]) => {
+    console.log('🎯 page.tsx: handleTaxonomiesChange called with:', codes)
     setSelectedTaxonomies(codes)
     // Search will be triggered by useEffect below
   }, [])
@@ -92,6 +93,23 @@ export default function SearchPage() {
     setTotalCount(null)
     // Search will be triggered by useEffect
   }, [])
+
+  // Track selectedTaxonomies changes for debugging
+  useEffect(() => {
+    console.log('📌 page.tsx: selectedTaxonomies state changed to:', selectedTaxonomies)
+    console.log('📌 page.tsx: selectedTaxonomies.length =', selectedTaxonomies.length)
+    console.log('📌 page.tsx: First taxonomy =', selectedTaxonomies[0])
+  }, [selectedTaxonomies])
+
+  // Extract root taxonomy code from full path
+  // Example: 'LUMINAIRE-INDOOR-CEILING' -> 'LUMINAIRE'
+  const getRootTaxonomyCode = (taxonomyCode: string): string => {
+    if (!taxonomyCode) return ''
+    const firstHyphen = taxonomyCode.indexOf('-')
+    const rootCode = firstHyphen > 0 ? taxonomyCode.substring(0, firstHyphen) : taxonomyCode
+    console.log('🔑 Extracting root taxonomy:', taxonomyCode, '→', rootCode)
+    return rootCode
+  }
 
   // Get combined taxonomy codes (tab filter + user selections)
   const getCombinedTaxonomies = useCallback(() => {
@@ -354,10 +372,11 @@ export default function SearchPage() {
 
             {/* Column 2: Technical Filters */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              {activeTab === 'LUMINAIRE' && selectedTaxonomies.length > 0 ? (
+              {console.log('🎨 RENDER: About to render FilterPanel conditional. selectedTaxonomies=', selectedTaxonomies, 'length=', selectedTaxonomies.length) || null}
+              {selectedTaxonomies.length > 0 ? (
                 <FilterPanel
                   onFilterChange={handleFilterChange}
-                  taxonomyCode={activeTab}
+                  taxonomyCode={getRootTaxonomyCode(selectedTaxonomies[0])}
                   selectedTaxonomies={selectedTaxonomies}
                   indoor={indoor}
                   outdoor={outdoor}
