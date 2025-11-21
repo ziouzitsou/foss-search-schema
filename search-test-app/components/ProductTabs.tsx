@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 
 interface ProductTabsProps {
+  children: React.ReactNode
   onTabChange?: (value: string) => void
 }
 
@@ -15,7 +16,7 @@ type RootCategory = {
   display_order: number
 }
 
-export default function ProductTabs({ onTabChange }: ProductTabsProps) {
+export default function ProductTabs({ children, onTabChange }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState('')
   const [tabs, setTabs] = useState<RootCategory[]>([])
   const [loading, setLoading] = useState(true)
@@ -77,6 +78,11 @@ export default function ProductTabs({ onTabChange }: ProductTabsProps) {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Tab Content */}
+      <div>
+        {children}
       </div>
     </div>
   )
