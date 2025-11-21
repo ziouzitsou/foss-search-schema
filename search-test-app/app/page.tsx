@@ -365,7 +365,7 @@ export default function SearchPage() {
               <FacetedCategoryNavigation
                 onSelectTaxonomies={handleTaxonomiesChange}
                 autoSearch={true}
-                debounceMs={300}
+                debounceMs={0}
                 rootCode={activeTab}
               />
             </div>

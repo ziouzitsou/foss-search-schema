@@ -19,14 +19,14 @@ type TreeNode = TaxonomyNode & {
 type FacetedCategoryNavigationProps = {
   onSelectTaxonomies: (codes: string[]) => void
   autoSearch?: boolean // Whether to trigger search automatically (default: true)
-  debounceMs?: number // Debounce time in milliseconds (default: 300)
+  debounceMs?: number // Debounce time in milliseconds (default: 0 for instant response)
   rootCode?: string // Optional root code to filter taxonomy tree (e.g., 'LUMINAIRE', 'ACCESSORIES')
 }
 
 export default function FacetedCategoryNavigation({
   onSelectTaxonomies,
   autoSearch = true,
-  debounceMs = 300,
+  debounceMs = 0, // Changed from 300ms to 0ms for instant single-selection response
   rootCode
 }: FacetedCategoryNavigationProps) {
   const [nodes, setNodes] = useState<TaxonomyNode[]>([])
@@ -62,6 +62,13 @@ export default function FacetedCategoryNavigation({
   useEffect(() => {
     if (!autoSearch) return
 
+    // If debounce is 0, call immediately without setTimeout
+    if (debounceMs === 0) {
+      onSelectTaxonomies(Array.from(selectedCodes))
+      return
+    }
+
+    // Otherwise use debounce
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current)
     }
