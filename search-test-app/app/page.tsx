@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Search, BarChart3 } from 'lucide-react'
 import FacetedCategoryNavigation from '@/components/FacetedCategoryNavigation'
 import ActiveFilters from '@/components/ActiveFilters'
 import ProductTabs from '@/components/ProductTabs'
@@ -280,82 +279,32 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen pb-12">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-xl">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <h1 className="text-4xl font-bold mb-2">Foss SA Product Search</h1>
-          <p className="text-blue-100">Professional lighting catalog search system</p>
-        </div>
-      </div>
+    <div className="p-5 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">🔍 Foss SA Search Test</h1>
 
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        {/* Search Bar */}
-        <div className="mb-6">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products by name, description, or features..."
-            className="w-full px-4 py-3 text-base rounded-lg border-2 border-slate-200
-                       focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
-                       transition-all duration-200 bg-white shadow-sm"
-          />
-        </div>
+      <button onClick={loadStats} className="mb-4 bg-blue-600 text-white px-5 py-2.5 rounded font-bold hover:bg-blue-700">
+        Load System Stats
+      </button>
 
-        {/* System Stats Toggle */}
-        <div className="mb-6">
-          <button
-            onClick={loadStats}
-            className="bg-white hover:bg-blue-50 text-blue-600 px-6 py-3 rounded-lg
-                       font-semibold border-2 border-blue-200 hover:border-blue-400
-                       transition-all duration-200 shadow-sm hover:shadow-md"
-          >
-            {stats ? 'Refresh Statistics' : 'Load System Statistics'}
-          </button>
-        </div>
-
-        {stats && (
-          <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl mb-6 shadow-lg border border-blue-100">
-            <h3 className="text-xl font-bold mb-4 text-slate-800 flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
-              System Statistics
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <div className="bg-white p-4 rounded-lg border border-slate-200">
-                <div className="text-sm text-slate-600 mb-1">Total Products</div>
-                <div className="text-2xl font-bold text-slate-800">{stats.total_products?.toLocaleString()}</div>
-              </div>
-              <div className="bg-white p-4 rounded-lg border border-slate-200">
-                <div className="text-sm text-slate-600 mb-1">Indoor</div>
-                <div className="text-2xl font-bold text-blue-600">{stats.indoor_products?.toLocaleString()}</div>
-              </div>
-              <div className="bg-white p-4 rounded-lg border border-slate-200">
-                <div className="text-sm text-slate-600 mb-1">Outdoor</div>
-                <div className="text-2xl font-bold text-green-600">{stats.outdoor_products?.toLocaleString()}</div>
-              </div>
-              <div className="bg-white p-4 rounded-lg border border-slate-200">
-                <div className="text-sm text-slate-600 mb-1">Dimmable</div>
-                <div className="text-2xl font-bold text-purple-600">{stats.dimmable_products?.toLocaleString()}</div>
-              </div>
-              <div className="bg-white p-4 rounded-lg border border-slate-200">
-                <div className="text-sm text-slate-600 mb-1">Filter Entries</div>
-                <div className="text-2xl font-bold text-slate-800">{stats.filter_entries?.toLocaleString()}</div>
-              </div>
-              <div className="bg-white p-4 rounded-lg border border-slate-200">
-                <div className="text-sm text-slate-600 mb-1">Categories</div>
-                <div className="text-2xl font-bold text-slate-800">{stats.taxonomy_nodes?.toLocaleString()}</div>
-              </div>
-            </div>
+      {stats && (
+        <div className="bg-blue-50 p-5 rounded-lg mb-5 shadow-sm">
+          <h3 className="text-xl font-bold mb-3">📊 System Statistics</h3>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2.5">
+            <div><strong>Total Products:</strong> {stats.total_products}</div>
+            <div><strong>Indoor:</strong> {stats.indoor_products}</div>
+            <div><strong>Outdoor:</strong> {stats.outdoor_products}</div>
+            <div><strong>Dimmable:</strong> {stats.dimmable_products}</div>
+            <div><strong>Filter Entries:</strong> {stats.filter_entries}</div>
+            <div><strong>Taxonomy Nodes:</strong> {stats.taxonomy_nodes}</div>
           </div>
-        )}
+        </div>
+      )}
 
       <ProductTabs onTabChange={handleTabChange}>
         {/* Three-Column Layout: Categories (left), Delta-Style Filters (middle), Location/Options (right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
           {/* Left Column: Fixation Categories */}
-          <div className="filter-category p-5">
-            <h3 className="text-lg font-bold mb-4 text-slate-800">Product Categories</h3>
+          <div style={{ flex: '1', minWidth: '250px', maxWidth: '300px' }}>
             <FacetedCategoryNavigation
               onSelectTaxonomies={handleTaxonomiesChange}
               autoSearch={true}
@@ -366,8 +315,7 @@ export default function SearchPage() {
 
           {/* Middle Column: Delta-Style Filters (Only shown when category is selected) */}
           {activeTab === 'LUMINAIRE' && selectedTaxonomies.length > 0 && (
-            <div className="filter-category p-5">
-              <h3 className="text-lg font-bold mb-4 text-slate-800">Technical Filters</h3>
+            <div style={{ flex: '1', minWidth: '300px', maxWidth: '400px' }}>
               <FilterPanel
                 onFilterChange={handleFilterChange}
                 taxonomyCode={activeTab}
@@ -386,89 +334,71 @@ export default function SearchPage() {
 
           {/* Right Column: Location & Options (Only shown when category is selected) */}
           {activeTab === 'LUMINAIRE' && selectedTaxonomies.length > 0 && (
-            <div className="filter-category p-5">
+            <div style={{ flex: '1', minWidth: '250px', maxWidth: '300px' }}>
               {/* Location Toggle Switches */}
-              <div className="mb-6">
-                <h3 className="text-lg font-bold mb-4 text-slate-800">Location</h3>
-                <div className="space-y-3">
-                  <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-50 transition-colors">
+              <div style={{ marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>Location</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={indoor === true}
                       onChange={(e) => setIndoor(e.target.checked ? true : null)}
-                      className="cursor-pointer"
+                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
                     />
-                    <span className="flex-1 font-medium">Indoor</span>
-                    {flagCounts.indoor && (
-                      <span className="text-sm text-slate-500">{flagCounts.indoor.true_count.toLocaleString()}</span>
-                    )}
+                    <span>Indoor {flagCounts.indoor && `(${flagCounts.indoor.true_count.toLocaleString()})`}</span>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={outdoor === true}
                       onChange={(e) => setOutdoor(e.target.checked ? true : null)}
-                      className="cursor-pointer"
+                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
                     />
-                    <span className="flex-1 font-medium">Outdoor</span>
-                    {flagCounts.outdoor && (
-                      <span className="text-sm text-slate-500">{flagCounts.outdoor.true_count.toLocaleString()}</span>
-                    )}
+                    <span>Outdoor {flagCounts.outdoor && `(${flagCounts.outdoor.true_count.toLocaleString()})`}</span>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={submersible === true}
                       onChange={(e) => setSubmersible(e.target.checked ? true : null)}
-                      className="cursor-pointer"
+                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
                     />
-                    <span className="flex-1 font-medium">Submersible</span>
-                    {flagCounts.submersible && (
-                      <span className="text-sm text-slate-500">{flagCounts.submersible.true_count.toLocaleString()}</span>
-                    )}
+                    <span>Submersible {flagCounts.submersible && `(${flagCounts.submersible.true_count.toLocaleString()})`}</span>
                   </label>
                 </div>
               </div>
 
               {/* Options Section */}
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-slate-800">Options</h3>
-                <div className="space-y-3">
-                  <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-50 transition-colors">
+              <div style={{ marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>Options</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={trimless === true}
                       onChange={(e) => setTrimless(e.target.checked ? true : null)}
-                      className="cursor-pointer"
+                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
                     />
-                    <span className="flex-1 font-medium">Trimless</span>
-                    {flagCounts.trimless && (
-                      <span className="text-sm text-slate-500">{flagCounts.trimless.true_count.toLocaleString()}</span>
-                    )}
+                    <span>Trimless {flagCounts.trimless && `(${flagCounts.trimless.true_count.toLocaleString()})`}</span>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={cutShapeRound === true}
                       onChange={(e) => setCutShapeRound(e.target.checked ? true : null)}
-                      className="cursor-pointer"
+                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
                     />
-                    <span className="flex-1 font-medium">Cut Shape: Round</span>
-                    {flagCounts.cut_shape_round && (
-                      <span className="text-sm text-slate-500">{flagCounts.cut_shape_round.true_count.toLocaleString()}</span>
-                    )}
+                    <span>Cut Shape: Round {flagCounts.cut_shape_round && `(${flagCounts.cut_shape_round.true_count.toLocaleString()})`}</span>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={cutShapeRectangular === true}
                       onChange={(e) => setCutShapeRectangular(e.target.checked ? true : null)}
-                      className="cursor-pointer"
+                      style={{ width: '40px', height: '20px', cursor: 'pointer' }}
                     />
-                    <span className="flex-1 font-medium">Cut Shape: Rectangular</span>
-                    {flagCounts.cut_shape_rectangular && (
-                      <span className="text-sm text-slate-500">{flagCounts.cut_shape_rectangular.true_count.toLocaleString()}</span>
-                    )}
+                    <span>Cut Shape: Rectangular {flagCounts.cut_shape_rectangular && `(${flagCounts.cut_shape_rectangular.true_count.toLocaleString()})`}</span>
                   </label>
                 </div>
               </div>
@@ -476,166 +406,187 @@ export default function SearchPage() {
           )}
         </div>
 
-        {/* Supplier Filter */}
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-6">
-          <h2 className="text-lg font-bold mb-4 text-slate-800">Suppliers</h2>
-          <div className="flex gap-3 flex-wrap">
-            {['Delta Light', 'Meyer Lighting'].map(supplier => (
-              <label
-                key={supplier}
-                className={`px-4 py-2 rounded-lg border-2 cursor-pointer transition-all duration-200 font-medium
-                  ${suppliers.includes(supplier)
-                    ? 'bg-blue-600 border-blue-600 text-white shadow-md'
-                    : 'bg-white border-slate-300 text-slate-700 hover:border-blue-400 hover:bg-blue-50'
-                  }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={suppliers.includes(supplier)}
-                  onChange={() => toggleSupplier(supplier)}
-                  className="hidden"
-                />
-                {supplier}
-              </label>
-            ))}
-          </div>
-          {loading && (
-            <div className="text-center text-blue-600 italic mt-4 flex items-center justify-center gap-2">
-              <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Searching...
-            </div>
-          )}
-        </div>
+        {/* Search Filters Below */}
+        <div style={cardStyle}>
+          <h2>Search Filters</h2>
 
-        {/* Error Display */}
-        {error && (
-          <div className="bg-red-50 border-2 border-red-200 text-red-800 p-5 rounded-xl mb-6 shadow-sm">
-            <div className="flex items-start gap-3">
-              <svg className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <strong className="font-bold">Error:</strong> {error}
-              </div>
+          {/* Supplier Filter */}
+          <div style={{ marginBottom: '15px' }}>
+            <label style={labelStyle}>Supplier:</label>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {['Delta Light', 'Meyer Lighting'].map(supplier => (
+                <label key={supplier} style={{
+                  padding: '5px 10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  background: suppliers.includes(supplier) ? '#3b82f6' : 'white',
+                  color: suppliers.includes(supplier) ? 'white' : 'black',
+                  cursor: 'pointer'
+                }}>
+                  <input
+                    type="checkbox"
+                    checked={suppliers.includes(supplier)}
+                    onChange={() => toggleSupplier(supplier)}
+                    style={{ marginRight: '5px' }}
+                  />
+                  {supplier}
+                </label>
+              ))}
             </div>
+          </div>
+
+        {/* Auto-filtering enabled - no manual search button needed */}
+        {loading && (
+          <div style={{ textAlign: 'center', color: '#3b82f6', fontStyle: 'italic', marginTop: '10px' }}>
+            ⚡ Searching...
           </div>
         )}
-
-        {/* Active Filter Chips */}
-        <ActiveFilters
-          selectedTaxonomyCodes={selectedTaxonomies}
-          onRemoveTaxonomy={handleRemoveTaxonomy}
-          onClearAll={handleClearAllTaxonomies}
-        />
-
-        {/* Results */}
-        <div className="mt-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-800">
-              Search Results
-              <span className="ml-3 text-lg font-normal text-slate-600">
-                ({products.length}{hasMore ? '+' : ''})
-                {totalCount !== null && ` of ${totalCount.toLocaleString()}`}
-              </span>
-            </h2>
-          </div>
-
-          {products.length === 0 && !loading && (
-            <div className="text-center py-16 bg-white rounded-xl border-2 border-dashed border-slate-300">
-              <svg className="w-16 h-16 mx-auto text-slate-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-lg text-slate-600">No products found</p>
-              <p className="text-sm text-slate-500 mt-2">Try adjusting your filters or search terms</p>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <div key={product.product_id} className="product-card group">
-                {/* Product ID */}
-                <div className="font-bold text-slate-800 mb-3 text-sm">
-                  {product.foss_pid}
-                </div>
-
-                {/* Description */}
-                <div className="text-sm text-slate-700 mb-3 line-clamp-2">
-                  {product.description_short}
-                </div>
-
-                {/* Supplier and Class */}
-                <div className="text-xs text-slate-500 mb-3">
-                  {product.supplier_name} | {product.class_name}
-                </div>
-
-                {/* Price */}
-                {product.price && (
-                  <div className="text-lg font-bold text-green-600 mb-4">
-                    €{product.price.toFixed(2)}
-                  </div>
-                )}
-
-                {/* Flags */}
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {product.flags.indoor && <span className="badge text-xs">🏠 Indoor</span>}
-                  {product.flags.outdoor && <span className="badge text-xs">🌳 Outdoor</span>}
-                  {product.flags.submersible && <span className="badge text-xs">🌊 Submersible</span>}
-                  {product.flags.trimless && <span className="badge text-xs">✂️ Trimless</span>}
-                  {product.flags.cut_shape_round && <span className="badge text-xs">⭕ Round</span>}
-                  {product.flags.cut_shape_rectangular && <span className="badge text-xs">▭ Rect</span>}
-                  {product.flags.ceiling && <span className="badge text-xs">⬆️ Ceiling</span>}
-                  {product.flags.wall && <span className="badge text-xs">◾ Wall</span>}
-                  {product.flags.floor && <span className="badge text-xs">🔦 Floor</span>}
-                  {product.flags.recessed && <span className="badge text-xs">⬇️ Recessed</span>}
-                  {product.flags.surface_mounted && <span className="badge text-xs">⬛ Surface</span>}
-                  {product.flags.suspended && <span className="badge text-xs">🔗 Suspended</span>}
-                </div>
-
-                {/* Key Features */}
-                <div className="text-xs text-slate-600 space-y-1">
-                  {product.key_features.power && (
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">⚡ Power:</span>
-                      <span>{product.key_features.power}W</span>
-                    </div>
-                  )}
-                  {product.key_features.color_temp && (
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">🌡️ Color:</span>
-                      <span>{product.key_features.color_temp}K</span>
-                    </div>
-                  )}
-                  {product.key_features.ip_rating && (
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">🛡️ IP:</span>
-                      <span>{product.key_features.ip_rating}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Load More Button */}
-          {hasMore && products.length > 0 && (
-            <div className="text-center mt-8">
-              <button
-                onClick={loadMore}
-                disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg
-                           font-semibold shadow-md hover:shadow-lg transition-all duration-200
-                           disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Loading...' : 'Load More (24 more)'}
-              </button>
-            </div>
-          )}
-        </div>
-      </ProductTabs>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div style={{ ...cardStyle, background: '#fee2e2', color: '#991b1b' }}>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
+      {/* Active Filter Chips */}
+      <ActiveFilters
+        selectedTaxonomyCodes={selectedTaxonomies}
+        onRemoveTaxonomy={handleRemoveTaxonomy}
+        onClearAll={handleClearAllTaxonomies}
+      />
+
+      {/* Results */}
+      <div style={{ marginTop: '20px' }}>
+        <h2>
+          Results ({products.length}{hasMore ? '+' : ''})
+          {totalCount !== null && ` of total ${totalCount}`}
+        </h2>
+
+        {products.length === 0 && !loading && (
+          <p style={{ color: '#666' }}>No products found. Try adjusting your filters.</p>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
+          {products.map((product) => (
+            <div key={product.product_id} style={productCardStyle}>
+              <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                {product.foss_pid}
+              </div>
+              {product.image_url && (
+                <div style={{ marginBottom: '10px', height: '200px', overflow: 'hidden', borderRadius: '4px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img
+                    src={product.image_url}
+                    alt={product.foss_pid}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center'
+                    }}
+                  />
+                </div>
+              )}
+              <div style={{ fontSize: '14px', marginBottom: '10px' }}>
+                {product.description_short}
+              </div>
+              <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>
+                {product.supplier_name} | {product.class_name}
+              </div>
+              {product.price && (
+                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#16a34a', marginBottom: '10px' }}>
+                  €{product.price.toFixed(2)}
+                </div>
+              )}
+
+              {/* Flags */}
+              <div style={{ fontSize: '11px', marginBottom: '5px' }}>
+                {product.flags.indoor && <span style={badgeStyle}>🏠 Indoor</span>}
+                {product.flags.outdoor && <span style={badgeStyle}>🌳 Outdoor</span>}
+                {product.flags.submersible && <span style={badgeStyle}>🌊 Submersible</span>}
+                {product.flags.trimless && <span style={badgeStyle}>✂️ Trimless</span>}
+                {product.flags.cut_shape_round && <span style={badgeStyle}>⭕ Round Cut</span>}
+                {product.flags.cut_shape_rectangular && <span style={badgeStyle}>▭ Rect Cut</span>}
+                {product.flags.ceiling && <span style={badgeStyle}>⬆️ Ceiling</span>}
+                {product.flags.wall && <span style={badgeStyle}>◾ Wall</span>}
+                {product.flags.floor && <span style={badgeStyle}>🔦 Floor</span>}
+                {product.flags.recessed && <span style={badgeStyle}>⬇️ Recessed</span>}
+                {product.flags.surface_mounted && <span style={badgeStyle}>⬛ Surface</span>}
+                {product.flags.suspended && <span style={badgeStyle}>🔗 Suspended</span>}
+              </div>
+
+              {/* Key Features */}
+              <div style={{ fontSize: '11px', color: '#666' }}>
+                {product.key_features.power && <div>⚡ {product.key_features.power}W</div>}
+                {product.key_features.color_temp && <div>🌡️ {product.key_features.color_temp}K</div>}
+                {product.key_features.ip_rating && <div>🛡️ {product.key_features.ip_rating}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Load More Button */}
+        {hasMore && products.length > 0 && (
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <button onClick={loadMore} disabled={loading} style={buttonStyle}>
+              {loading ? 'Loading...' : 'Load More (24 more)'}
+            </button>
+          </div>
+        )}
+      </div>
+      </ProductTabs>
     </div>
   )
+}
+
+const cardStyle = {
+  background: 'white',
+  padding: '20px',
+  borderRadius: '8px',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+  marginBottom: '20px'
+}
+
+const labelStyle = {
+  display: 'block',
+  fontWeight: 'bold',
+  marginBottom: '8px'
+}
+
+const inputStyle = {
+  width: '100%',
+  padding: '8px 12px',
+  border: '1px solid #ddd',
+  borderRadius: '4px',
+  fontSize: '14px'
+}
+
+const buttonStyle = {
+  background: '#3b82f6',
+  color: 'white',
+  padding: '10px 20px',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  fontSize: '16px',
+  fontWeight: 'bold'
+}
+
+const productCardStyle = {
+  background: 'white',
+  padding: '15px',
+  borderRadius: '8px',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+  border: '1px solid #e5e7eb'
+}
+
+const badgeStyle = {
+  display: 'inline-block',
+  padding: '2px 6px',
+  marginRight: '4px',
+  marginBottom: '4px',
+  background: '#eff6ff',
+  borderRadius: '4px',
+  fontSize: '10px'
 }
