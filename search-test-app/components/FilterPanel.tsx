@@ -21,12 +21,6 @@ export type FilterPanelProps = {
   onFilterChange: (filters: FilterState) => void
   taxonomyCode?: string
   selectedTaxonomies?: string[]
-  indoor?: boolean | null
-  outdoor?: boolean | null
-  submersible?: boolean | null
-  trimless?: boolean | null
-  cutShapeRound?: boolean | null
-  cutShapeRectangular?: boolean | null
   query?: string | null
   suppliers?: string[]
 }
@@ -35,12 +29,6 @@ export default function FilterPanel({
   onFilterChange,
   taxonomyCode,  // No default - passed dynamically from parent
   selectedTaxonomies = [],
-  indoor = null,
-  outdoor = null,
-  submersible = null,
-  trimless = null,
-  cutShapeRound = null,
-  cutShapeRectangular = null,
   query = null,
   suppliers = []
 }: FilterPanelProps) {
@@ -48,12 +36,12 @@ export default function FilterPanel({
   const [filterFacets, setFilterFacets] = useState<FilterFacet[]>([])
   const [filterState, setFilterState] = useState<FilterState>({})
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-    new Set(['electricals', 'design', 'light_engine', 'other'])
+    new Set(['electricals', 'design', 'light_engine', 'location', 'options', 'other'])
   )
   const [loading, setLoading] = useState(true)
 
   // Load filter definitions and facets
-  // Reload when taxonomy, selected taxonomies, OR context flags change
+  // Reload when taxonomy, selected taxonomies, query, suppliers, OR location/options filters change
   // This ensures technical filter counts update based on user selections
   useEffect(() => {
     console.log('🔄 FilterPanel: Taxonomy changed to:', taxonomyCode)
@@ -61,14 +49,14 @@ export default function FilterPanel({
   }, [
     taxonomyCode,
     selectedTaxonomies.join(','),
-    indoor,
-    outdoor,
-    submersible,
-    trimless,
-    cutShapeRound,
-    cutShapeRectangular,
     query,
-    suppliers.join(',')
+    suppliers.join(','),
+    filterState.indoor,
+    filterState.outdoor,
+    filterState.submersible,
+    filterState.trimless,
+    filterState.cut_shape_round,
+    filterState.cut_shape_rectangular
   ])
 
   const loadFilters = async () => {
@@ -84,6 +72,14 @@ export default function FilterPanel({
       if (defError) throw defError
 
       console.log(`✅ Loaded ${definitions?.length || 0} filter definitions for taxonomy: ${taxonomyCode}`, definitions)
+
+      // Extract location/options flags from current filter state
+      const indoor = filterState.indoor ?? null
+      const outdoor = filterState.outdoor ?? null
+      const submersible = filterState.submersible ?? null
+      const trimless = filterState.trimless ?? null
+      const cutShapeRound = filterState.cut_shape_round ?? null
+      const cutShapeRectangular = filterState.cut_shape_rectangular ?? null
 
       // Get DYNAMIC filter facets based on selected taxonomies AND all current filter selections
       const { data: facets, error: facetsError } = await supabase
@@ -175,7 +171,9 @@ export default function FilterPanel({
   const categoryLabels: Record<string, string> = {
     electricals: 'Electricals',
     design: 'Design',
-    light_engine: 'Light Engine'
+    light_engine: 'Light Engine',
+    location: 'Location',
+    options: 'Options'
   }
 
   // Define presets for specific filters

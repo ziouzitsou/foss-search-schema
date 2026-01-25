@@ -11,8 +11,6 @@ import ProductCard from '@/components/ProductCard'
 import ProductCardSkeleton from '@/components/ProductCardSkeleton'
 import EmptyState from '@/components/EmptyState'
 import SystemStatsModal from '@/components/SystemStatsModal'
-import CustomCheckbox from '@/components/CustomCheckbox'
-import { Home, TreePine, Droplet, Scissors, Circle, Square } from 'lucide-react'
 
 type Product = {
   product_id: string
@@ -48,15 +46,6 @@ type Product = {
 export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [suppliers, setSuppliers] = useState<string[]>([])
-  const [indoor, setIndoor] = useState<boolean | null>(null)
-  const [outdoor, setOutdoor] = useState<boolean | null>(null)
-  const [submersible, setSubmersible] = useState<boolean | null>(null)
-  const [trimless, setTrimless] = useState<boolean | null>(null)
-  const [cutShapeRound, setCutShapeRound] = useState<boolean | null>(null)
-  const [cutShapeRectangular, setCutShapeRectangular] = useState<boolean | null>(null)
-  const [powerMin, setPowerMin] = useState('')
-  const [powerMax, setPowerMax] = useState('')
-  const [ipRatings, setIpRatings] = useState<string[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -68,7 +57,6 @@ export default function SearchPage() {
   const [selectedTaxonomies, setSelectedTaxonomies] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState('') // Now holds taxonomy code (e.g., 'LUMINAIRE')
   const [activeFilters, setActiveFilters] = useState<any>({})
-  const [flagCounts, setFlagCounts] = useState<Record<string, { true_count: number, false_count: number }>>({})
 
   const handleTaxonomiesChange = useCallback((codes: string[]) => {
     console.log('🎯 page.tsx: handleTaxonomiesChange called with:', codes)
@@ -125,55 +113,10 @@ export default function SearchPage() {
   // Auto-trigger search when any filter changes (instant, no debounce)
   useEffect(() => {
     console.log('🔍 Search triggered by filter change:', {
-      selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible,
-      trimless, cutShapeRound, cutShapeRectangular, activeFilters
+      selectedTaxonomies, activeTab, suppliers, activeFilters
     })
     handleSearch()
-  }, [selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular, JSON.stringify(activeFilters)]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Load dynamic flag counts based on current filters
-  // This updates whenever filters change, showing only available options
-  useEffect(() => {
-    const loadFlagCounts = async () => {
-      const combinedTaxonomies = getCombinedTaxonomies()
-      if (!combinedTaxonomies) {
-        setFlagCounts({})
-        return
-      }
-
-      try {
-        // Call the dynamic facets function with current filter selections
-        const { data, error } = await supabase.rpc('get_filter_facets_with_context', {
-          p_query: query || null,
-          p_taxonomy_codes: combinedTaxonomies,
-          p_suppliers: suppliers.length > 0 ? suppliers : null,
-          p_indoor: indoor,
-          p_outdoor: outdoor,
-          p_submersible: submersible,
-          p_trimless: trimless,
-          p_cut_shape_round: cutShapeRound,
-          p_cut_shape_rectangular: cutShapeRectangular
-        })
-
-        if (error) throw error
-
-        // Convert array to object for easy lookup
-        const countsMap: Record<string, { true_count: number, false_count: number }> = {}
-        data?.forEach((item: any) => {
-          countsMap[item.flag_name] = {
-            true_count: item.true_count,
-            false_count: item.false_count
-          }
-        })
-        setFlagCounts(countsMap)
-        console.log('✅ Dynamic facet counts loaded:', countsMap)
-      } catch (error) {
-        console.error('Error loading dynamic facet counts:', error)
-      }
-    }
-
-    loadFlagCounts()
-  }, [selectedTaxonomies, activeTab, suppliers, indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular, query]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedTaxonomies, activeTab, suppliers, JSON.stringify(activeFilters)]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFilterChange = useCallback((filters: any) => {
     console.log('📥 page.tsx handleFilterChange received:', filters)
@@ -183,6 +126,15 @@ export default function SearchPage() {
   const getTotalCount = async () => {
     try {
       const combinedTaxonomies = getCombinedTaxonomies()
+
+      // Extract location/options flags from activeFilters (now managed by FilterPanel)
+      const indoor = activeFilters.indoor ?? null
+      const outdoor = activeFilters.outdoor ?? null
+      const submersible = activeFilters.submersible ?? null
+      const trimless = activeFilters.trimless ?? null
+      const cutShapeRound = activeFilters.cut_shape_round ?? null
+      const cutShapeRectangular = activeFilters.cut_shape_rectangular ?? null
+
       console.log('📊 Calling count RPC with params:', {
         p_query: query || null,
         p_filters: activeFilters,
@@ -218,15 +170,20 @@ export default function SearchPage() {
   }
 
   const handleSearch = async (resetLimit = true) => {
-    console.log('🔎 handleSearch called with filters:', {
-      indoor, outdoor, submersible, trimless, cutShapeRound, cutShapeRectangular,
-      resetLimit
-    })
+    console.log('🔎 handleSearch called')
     setLoading(true)
     setError(null)
 
     const searchLimit = resetLimit ? 24 : limit
     const combinedTaxonomies = getCombinedTaxonomies()
+
+    // Extract location/options flags from activeFilters (now managed by FilterPanel)
+    const indoor = activeFilters.indoor ?? null
+    const outdoor = activeFilters.outdoor ?? null
+    const submersible = activeFilters.submersible ?? null
+    const trimless = activeFilters.trimless ?? null
+    const cutShapeRound = activeFilters.cut_shape_round ?? null
+    const cutShapeRectangular = activeFilters.cut_shape_rectangular ?? null
 
     try {
       // Get total count first
@@ -317,7 +274,7 @@ export default function SearchPage() {
     )
   }
 
-  const hasAnyFilters = selectedTaxonomies.length > 0 || suppliers.length > 0 || indoor !== null || outdoor !== null || submersible !== null || trimless !== null || cutShapeRound !== null || cutShapeRectangular !== null || Object.keys(activeFilters).length > 0
+  const hasAnyFilters = selectedTaxonomies.length > 0 || suppliers.length > 0 || Object.keys(activeFilters).length > 0
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -378,12 +335,6 @@ export default function SearchPage() {
                   onFilterChange={handleFilterChange}
                   taxonomyCode={getRootTaxonomyCode(selectedTaxonomies[0])}
                   selectedTaxonomies={selectedTaxonomies}
-                  indoor={indoor}
-                  outdoor={outdoor}
-                  submersible={submersible}
-                  trimless={trimless}
-                  cutShapeRound={cutShapeRound}
-                  cutShapeRectangular={cutShapeRectangular}
                   query={query || null}
                   suppliers={suppliers}
                 />
@@ -395,71 +346,6 @@ export default function SearchPage() {
                   </div>
                 </div>
               )}
-            </div>
-
-            {/* Column 3: Location & Options */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              {/* Location Section */}
-              <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-lg border border-slate-200 p-6" style={{ marginBottom: '24px' }}>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1 h-6 bg-green-500 rounded-full"></div>
-                  <h3 className="font-bold text-lg text-slate-800">Location</h3>
-                </div>
-                <div className="space-y-3">
-                  <CustomCheckbox
-                    checked={indoor === true}
-                    onChange={(checked) => setIndoor(checked ? true : null)}
-                    label="Indoor"
-                    count={flagCounts.indoor?.true_count}
-                    icon={Home}
-                  />
-                  <CustomCheckbox
-                    checked={outdoor === true}
-                    onChange={(checked) => setOutdoor(checked ? true : null)}
-                    label="Outdoor"
-                    count={flagCounts.outdoor?.true_count}
-                    icon={TreePine}
-                  />
-                  <CustomCheckbox
-                    checked={submersible === true}
-                    onChange={(checked) => setSubmersible(checked ? true : null)}
-                    label="Submersible"
-                    count={flagCounts.submersible?.true_count}
-                    icon={Droplet}
-                  />
-                </div>
-              </div>
-
-              {/* Options Section */}
-              <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-lg border border-slate-200 p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1 h-6 bg-purple-500 rounded-full"></div>
-                  <h3 className="font-bold text-lg text-slate-800">Options</h3>
-                </div>
-                <div className="space-y-3">
-                  <CustomCheckbox
-                    checked={trimless === true}
-                    onChange={(checked) => setTrimless(checked ? true : null)}
-                    label="Trimless"
-                    count={flagCounts.trimless?.true_count}
-                    icon={Scissors}
-                  />
-                  <CustomCheckbox
-                    checked={cutShapeRound === true}
-                    onChange={(checked) => setCutShapeRound(checked ? true : null)}
-                    label="Round Cut"
-                    count={flagCounts.cut_shape_round?.true_count}
-                    icon={Circle}
-                  />
-                  <CustomCheckbox
-                    checked={cutShapeRectangular === true}
-                    onChange={(checked) => setCutShapeRectangular(checked ? true : null)}
-                    label="Rectangular Cut"
-                    count={flagCounts.cut_shape_rectangular?.true_count}
-                    icon={Square}
-                  />
-                </div>
-              </div>
             </div>
           </div>
 
