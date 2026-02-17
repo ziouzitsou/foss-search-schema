@@ -3,7 +3,7 @@
 **Application**: search-test-app (Next.js 15.5.6)
 **Framework**: React 18.3.1 with TypeScript
 **Styling**: Tailwind CSS 4.1.17
-**Location**: `/home/sysadmin/tools/searchdb/search-test-app/components/`
+**Location**: `/home/dimitris/foss/searchdb/search-test-app/components/`
 **Total Lines**: 1,567 (production-quality components)
 
 ---

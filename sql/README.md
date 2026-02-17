@@ -178,7 +178,7 @@ Submersible: W
 
 ### Option 1: Run All Files Sequentially
 ```bash
-cd /home/sysadmin/tools/searchdb/sql
+cd /home/dimitris/foss/searchdb/sql
 
 # 0. Drop existing schema (if reinstalling)
 psql -U postgres -d your_db -f 00-drop-search-schema.sql
@@ -274,7 +274,7 @@ ANALYZE search.product_taxonomy_flags;
 ANALYZE search.product_filter_index;
 ```
 
-**Recommended:** Add to `/home/sysadmin/fossdb/utils/matview_maintenance/automated_matview_refresh.py`
+**Recommended:** Use the refresh script at `~/foss/supabase/db-maintenance/refresh-matviews.sh`
 
 ---
 

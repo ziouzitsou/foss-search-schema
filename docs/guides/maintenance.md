@@ -55,7 +55,7 @@ ANALYZE search.filter_facets;
 
 ```bash
 #!/bin/bash
-# /home/sysadmin/fossdb/utils/refresh_search_views.sh
+# /home/dimitris/foss/supabase/db-maintenance/refresh_search_views.sh
 
 echo "Starting materialized view refresh..."
 
@@ -102,7 +102,7 @@ echo "Refresh complete!"
 **Add to cron** (example: daily at 2 AM after catalog import):
 
 ```bash
-0 2 * * * /home/sysadmin/fossdb/utils/refresh_search_views.sh >> /var/log/search_refresh.log 2>&1
+0 2 * * * /home/dimitris/foss/supabase/db-maintenance/refresh_search_views.sh >> /var/log/search_refresh.log 2>&1
 ```
 
 ### 2. Check System Statistics
@@ -721,19 +721,19 @@ WHERE 'DRIVER' = ANY(taxonomy_path);
 # Full schema dump (structure + data)
 pg_dump $DATABASE_URL \
     --schema=search \
-    --file=/home/sysadmin/backups/search_schema_$(date +%Y%m%d).sql
+    --file=/home/dimitris/foss/backups/search_schema_$(date +%Y%m%d).sql
 
 # Structure only (for version control)
 pg_dump $DATABASE_URL \
     --schema=search \
     --schema-only \
-    --file=/home/sysadmin/tools/searchdb/sql/schema_backup.sql
+    --file=/home/dimitris/foss/searchdb/sql/schema_backup.sql
 ```
 
 **Commit schema changes to git**:
 
 ```bash
-cd /home/sysadmin/tools/searchdb
+cd /home/dimitris/foss/searchdb
 git add sql/
 git commit -m "backup: Search schema structure $(date +%Y-%m-%d)"
 git push
@@ -744,7 +744,7 @@ git push
 **Export configuration tables**:
 
 ```bash
-psql $DATABASE_URL <<EOF > /home/sysadmin/backups/search_config_$(date +%Y%m%d).sql
+psql $DATABASE_URL <<EOF > /home/dimitris/foss/backups/search_config_$(date +%Y%m%d).sql
 -- Taxonomy
 COPY (SELECT * FROM search.taxonomy ORDER BY code) TO STDOUT WITH (FORMAT CSV, HEADER);
 
@@ -762,7 +762,7 @@ EOF
 
 ```bash
 # WARNING: This will drop and recreate the search schema
-psql $DATABASE_URL < /home/sysadmin/backups/search_schema_20251119.sql
+psql $DATABASE_URL < /home/dimitris/foss/backups/search_schema_20251119.sql
 ```
 
 **Restore configuration only**:
@@ -795,7 +795,7 @@ REFRESH MATERIALIZED VIEW search.filter_facets;
 psql $DATABASE_URL -c "DROP SCHEMA IF EXISTS search CASCADE;"
 
 # 2. Recreate from SQL files (in order)
-cd /home/sysadmin/tools/searchdb/sql
+cd /home/dimitris/foss/searchdb/sql
 psql $DATABASE_URL < 01-create-search-schema.sql
 psql $DATABASE_URL < 02-populate-taxonomy.sql
 psql $DATABASE_URL < 03-populate-classification-rules.sql
@@ -957,7 +957,7 @@ WHERE product_id NOT IN (SELECT product_id FROM items.product_info);
 
 **Git Repository**:
 - GitHub: (your repository URL)
-- Local: `/home/sysadmin/tools/searchdb/`
+- Local: `/home/dimitris/foss/searchdb/`
 
 ---
 
@@ -971,7 +971,7 @@ WHERE product_id NOT IN (SELECT product_id FROM items.product_info);
 
 ```bash
 # Daily refresh
-psql $DATABASE_URL < /home/sysadmin/fossdb/utils/refresh_search_views.sh
+psql $DATABASE_URL < /home/dimitris/foss/supabase/db-maintenance/refresh_search_views.sh
 
 # Check statistics
 psql $DATABASE_URL -c "SELECT * FROM search.get_search_statistics();"

@@ -71,7 +71,7 @@ BEGIN
             WHEN p_query IS NOT NULL AND pi.description_short ILIKE '%' || p_query || '%' THEN 2
             ELSE 3
         END as relevance_score
-    FROM items.product_info pi
+    FROM items.product_catalog pi
     INNER JOIN search.product_taxonomy_flags ptf ON pi.product_id = ptf.product_id
     WHERE
         -- Text search

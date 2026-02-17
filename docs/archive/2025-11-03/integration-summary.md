@@ -2,7 +2,7 @@
 
 **Date**: 2025-11-03
 **Status**: ✅ Ready for FOSSAPP Integration
-**Location**: `/home/sysadmin/tools/searchdb/`
+**Location**: `/home/dimitris/foss/searchdb/`
 
 ---
 
@@ -36,7 +36,7 @@ A complete product search system with advanced filtering, now **fully compatible
 
 ### SQL Files (Database)
 ```
-/home/sysadmin/tools/searchdb/
+/home/dimitris/foss/searchdb/
 ├── 01-create-search-schema.sql        ✅ Deployed
 ├── 02-populate-example-data.sql       ✅ Deployed
 ├── 03-create-materialized-views.sql   ✅ Deployed (FIXED numeric bug)
@@ -48,7 +48,7 @@ A complete product search system with advanced filtering, now **fully compatible
 
 ### TypeScript Files (Integration)
 ```
-/home/sysadmin/tools/searchdb/
+/home/dimitris/foss/searchdb/
 ├── search-server-actions.ts           ⭐ FOSSAPP server actions
 └── search-test-app/                   ✅ Test app (running)
     ├── app/page.tsx                   Test UI
@@ -60,7 +60,7 @@ A complete product search system with advanced filtering, now **fully compatible
 
 ### Documentation
 ```
-/home/sysadmin/tools/searchdb/
+/home/dimitris/foss/searchdb/
 ├── FOSSAPP_INTEGRATION_GUIDE.md       ⭐ Main integration guide
 ├── ARCHITECTURE_COMPARISON.md         Explains test app vs FOSSAPP
 ├── TEST_RESULTS.md                    Complete test report
@@ -102,7 +102,7 @@ Read `FOSSAPP_INTEGRATION_GUIDE.md` - it has:
 
 Copy content from `search-server-actions.ts` to:
 ```
-/home/sysadmin/nextjs/fossapp/src/lib/actions.ts
+/home/dimitris/foss/fossapp/src/lib/actions.ts
 ```
 
 **What to copy**:
@@ -133,7 +133,7 @@ Option B: **Add to Existing Page**
 ### Step 4: Test Locally (15 minutes)
 
 ```bash
-cd /home/sysadmin/nextjs/fossapp
+cd /home/dimitris/foss/nextjs/fossapp
 npm run dev  # Port 8080
 ```
 
@@ -146,7 +146,7 @@ Test scenarios:
 ### Step 5: Deploy (5 minutes)
 
 ```bash
-cd /home/sysadmin/nextjs/fossapp
+cd /home/dimitris/foss/nextjs/fossapp
 docker-compose up -d
 ```
 

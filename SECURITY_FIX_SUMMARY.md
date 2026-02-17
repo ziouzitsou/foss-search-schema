@@ -432,9 +432,9 @@ SELECT * FROM search.get_search_statistics();
 ## 11. Support & References
 
 ### Documentation
-- **Main Guide**: `/home/sysadmin/tools/searchdb/README.md`
-- **SQL Files**: `/home/sysadmin/tools/searchdb/sql/`
-- **Project Docs**: `/home/sysadmin/tools/searchdb/docs/`
+- **Main Guide**: `/home/dimitris/foss/searchdb/README.md`
+- **SQL Files**: `/home/dimitris/foss/searchdb/sql/`
+- **Project Docs**: `/home/dimitris/foss/searchdb/docs/`
 
 ### Related Issues
 - Supabase RLS: https://supabase.com/docs/guides/auth/row-level-security

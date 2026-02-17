@@ -430,7 +430,7 @@ psql -U postgres -d fossapp -f sql/04-test-filter-queries.sql
 4. Connect UI to backend
 5. Test filter combinations
 
-**Reference**: See `/home/sysadmin/tools/searchdb/search-schema-complete-guide.md` Section 5 for Next.js integration code examples.
+**Reference**: See `/home/dimitris/foss/searchdb/search-schema-complete-guide.md` Section 5 for Next.js integration code examples.
 
 ### Week 2: Validation & Iteration
 
@@ -508,7 +508,7 @@ Total: ~35s additional
 2. ✅ **Backup database** - Before running any SQL
 3. ✅ **Run SQL files in order**:
    ```bash
-   cd /home/sysadmin/tools/searchdb/sql
+   cd /home/dimitris/foss/searchdb/sql
    psql -U postgres -d fossapp -f 01-create-filter-tables.sql
    psql -U postgres -d fossapp -f 02-populate-filter-definitions.sql
    psql -U postgres -d fossapp -f 03-populate-filter-index.sql

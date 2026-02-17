@@ -219,7 +219,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...[SERVICE_ROLE_KEY]
 
 ### Step 1: Test with Test App
 ```bash
-cd /home/sysadmin/tools/searchdb/search-test-app
+cd /home/dimitris/foss/searchdb/search-test-app
 # Already running at http://localhost:3001
 ```
 
@@ -232,7 +232,7 @@ Test all functionality:
 ### Step 2: Copy to FOSSAPP
 ```typescript
 // Copy server actions from search-server-actions.ts
-// to /home/sysadmin/nextjs/fossapp/src/lib/actions.ts
+// to /home/dimitris/foss/fossapp/src/lib/actions.ts
 ```
 
 ### Step 3: Build UI in FOSSAPP
@@ -243,13 +243,13 @@ Test all functionality:
 
 ### Step 4: Test in FOSSAPP
 ```bash
-cd /home/sysadmin/nextjs/fossapp
+cd /home/dimitris/foss/nextjs/fossapp
 npm run dev  # Port 8080
 ```
 
 ### Step 5: Deploy
 ```bash
-cd /home/sysadmin/nextjs/fossapp
+cd /home/dimitris/foss/nextjs/fossapp
 docker-compose up -d
 ```
 

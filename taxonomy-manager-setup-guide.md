@@ -4,7 +4,7 @@
 
 Create a standalone Next.js application for managing the product taxonomy system used by FOSSAPP. This tool will provide CRUD operations for the `search.taxonomy` table and related classification rules, with the potential to be integrated as an admin plugin into FOSSAPP later.
 
-**Location**: `/home/sysadmin/tools/taxonomy-manager/`
+**Location**: `/home/dimitris/foss/taxonomy-manager/`
 
 ## 🔧 Tech Stack (Match FOSSAPP)
 
@@ -318,7 +318,7 @@ Before considering complete:
 
 ```bash
 # Navigate to tools directory
-cd /home/sysadmin/tools/
+cd /home/dimitris/foss/
 
 # Create new Next.js app
 npx create-next-app@latest taxonomy-manager --typescript --tailwind --app --use-npm
@@ -334,7 +334,7 @@ npx shadcn@latest init
 npx shadcn@latest add button card input label textarea select checkbox dialog toast badge table accordion separator scroll-area
 
 # Create .env.local (copy values from FOSSAPP)
-cp /home/sysadmin/nextjs/fossapp/.env.local .env.local
+cp /home/dimitris/foss/fossapp/.env.local .env.local
 # Edit .env.local to remove NextAuth variables
 
 # Run dev server
@@ -355,7 +355,7 @@ The tool is complete when:
 
 ## 💡 Additional Notes
 
-- Reference the FOSSAPP code for patterns: `/home/sysadmin/nextjs/fossapp/`
+- Reference the FOSSAPP code for patterns: `/home/dimitris/foss/fossapp/`
 - The `search.taxonomy` table schema is well-defined - don't alter it
 - Always refresh `product_taxonomy_flags` after taxonomy/rule changes
 - Consider adding a "Preview Impact" feature before applying changes
@@ -365,7 +365,7 @@ The tool is complete when:
 ## 🔄 Future Integration into FOSSAPP
 
 When ready to integrate:
-1. Move routes to `/home/sysadmin/nextjs/fossapp/src/app/admin/taxonomy/`
+1. Move routes to `/home/dimitris/foss/fossapp/src/app/admin/taxonomy/`
 2. Add authentication middleware to check for admin role
 3. Update navigation to include admin section
 4. Ensure all routes are protected by session check
@@ -376,5 +376,5 @@ When ready to integrate:
 Good luck! 🚀
 
 **Created**: 2025-11-22
-**Location**: `/home/sysadmin/tools/taxonomy-manager/`
-**FOSSAPP Reference**: `/home/sysadmin/nextjs/fossapp/`
+**Location**: `/home/dimitris/foss/taxonomy-manager/`
+**FOSSAPP Reference**: `/home/dimitris/foss/fossapp/`

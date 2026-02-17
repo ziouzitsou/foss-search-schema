@@ -26,7 +26,7 @@ The search system is **100% compatible** with FOSSAPP's existing architecture:
 Copy the search server actions to your actions file:
 
 ```bash
-# Location: /home/sysadmin/nextjs/fossapp/src/lib/actions.ts
+# Location: /home/dimitris/foss/fossapp/src/lib/actions.ts
 # Add the search server actions to this file
 ```
 
@@ -234,10 +234,10 @@ NEXT_PUBLIC_SUPABASE_URL=your_url_here
 
 ### Option 1: Test in Isolation
 
-Use the test app at `/home/sysadmin/tools/searchdb/search-test-app/`:
+Use the test app at `/home/dimitris/foss/searchdb/search-test-app/`:
 
 ```bash
-cd /home/sysadmin/tools/searchdb/search-test-app
+cd /home/dimitris/foss/searchdb/search-test-app
 # Already running at http://localhost:3001
 ```
 
@@ -632,7 +632,7 @@ See `search-server-actions.ts` for full TypeScript definitions of:
 
 ### SQL Files
 
-All SQL files are in `/home/sysadmin/tools/searchdb/`:
+All SQL files are in `/home/dimitris/foss/searchdb/`:
 1. `01-create-search-schema.sql`
 2. `02-populate-example-data.sql`
 3. `03-create-materialized-views.sql`
@@ -642,7 +642,7 @@ All SQL files are in `/home/sysadmin/tools/searchdb/`:
 ### Test App Reference
 
 Running at: http://localhost:3001
-Location: `/home/sysadmin/tools/searchdb/search-test-app/`
+Location: `/home/dimitris/foss/searchdb/search-test-app/`
 
 ---
 

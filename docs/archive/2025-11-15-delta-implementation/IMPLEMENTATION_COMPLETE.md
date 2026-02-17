@@ -160,7 +160,7 @@ LIMIT 10;
 ### SQL Files Created
 
 ```
-/home/sysadmin/tools/searchdb/sql/
+/home/dimitris/foss/searchdb/sql/
 ├── 01-create-filter-tables.sql      ✅ Executed
 ├── 02-populate-filter-definitions.sql ✅ Executed (Phase 1)
 ├── 03-populate-filter-index.sql     ✅ Executed
@@ -170,7 +170,7 @@ LIMIT 10;
 ### UI Files Created/Modified
 
 ```
-/home/sysadmin/tools/searchdb/search-test-app/
+/home/dimitris/foss/searchdb/search-test-app/
 ├── components/
 │   └── FilterPanel.tsx              ✅ NEW - Delta-style filter panel
 └── app/
@@ -180,7 +180,7 @@ LIMIT 10;
 ### Documentation Created
 
 ```
-/home/sysadmin/tools/searchdb/docs/
+/home/dimitris/foss/searchdb/docs/
 ├── IMPLEMENTATION_SUMMARY.md        📝 Complete implementation guide
 ├── IMPLEMENTATION_COMPLETE.md       📝 This document
 ├── delta-filter-testing-complete.md 📝 Delta research findings

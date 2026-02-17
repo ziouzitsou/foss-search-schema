@@ -252,7 +252,7 @@ FROM search_products_with_filters(
 9. ✅ Verify only selected checkboxes are checked
 10. ✅ Verify product list updates correctly
 
-**Screenshot**: `/home/sysadmin/tools/searchdb/.playwright-mcp/delta-filters-working.png`
+**Screenshot**: `/home/dimitris/foss/searchdb/.playwright-mcp/delta-filters-working.png`
 
 ---
 
@@ -445,7 +445,7 @@ Currently filters show values by product count (descending). Could add:
 ### SQL Files Created
 
 ```
-/home/sysadmin/tools/searchdb/sql/
+/home/dimitris/foss/searchdb/sql/
 ├── 01-create-filter-tables.sql      ✅ Executed
 ├── 02-populate-filter-definitions.sql ✅ Executed (Phase 1 - 8 filters)
 ├── 03-populate-filter-index.sql     ✅ Executed
@@ -455,7 +455,7 @@ Currently filters show values by product count (descending). Could add:
 ### UI Files Created/Modified
 
 ```
-/home/sysadmin/tools/searchdb/search-test-app/
+/home/dimitris/foss/searchdb/search-test-app/
 ├── components/
 │   └── FilterPanel.tsx              ✅ Working (Delta-style filters)
 └── app/
@@ -465,7 +465,7 @@ Currently filters show values by product count (descending). Could add:
 ### Documentation Created
 
 ```
-/home/sysadmin/tools/searchdb/docs/
+/home/dimitris/foss/searchdb/docs/
 ├── IMPLEMENTATION_COMPLETE.md       📝 Original implementation guide
 ├── FILTER_IMPLEMENTATION_COMPLETE.md 📝 This document
 ├── delta-filter-testing-complete.md 📝 Delta research findings
@@ -475,7 +475,7 @@ Currently filters show values by product count (descending). Could add:
 ### Screenshots
 
 ```
-/home/sysadmin/tools/searchdb/.playwright-mcp/
+/home/dimitris/foss/searchdb/.playwright-mcp/
 └── delta-filters-working.png        🖼️ Full page screenshot showing working filters
 ```
 

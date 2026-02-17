@@ -37,7 +37,7 @@
 
 ### SQL Files (All Deployed ✅)
 ```
-/home/sysadmin/tools/searchdb/
+/home/dimitris/foss/searchdb/
 ├── 01-create-search-schema.sql          ✅ Schema + tables
 ├── 02-populate-example-data.sql         ✅ Configuration
 ├── 03-create-materialized-views.sql     ✅ Views (FIXED numeric bug)
@@ -47,7 +47,7 @@
 
 ### Integration Files (Ready to Use ✅)
 ```
-/home/sysadmin/tools/searchdb/
+/home/dimitris/foss/searchdb/
 ├── search-server-actions.ts             ⭐ Copy to FOSSAPP
 ├── FOSSAPP_INTEGRATION_GUIDE.md         ⭐ Read first
 ├── ARCHITECTURE_COMPARISON.md           Test app vs FOSSAPP
@@ -58,7 +58,7 @@
 
 ### Test App (Running ✅)
 ```
-/home/sysadmin/tools/searchdb/search-test-app/
+/home/dimitris/foss/searchdb/search-test-app/
 ├── app/page.tsx                         Test UI
 ├── lib/supabase.ts                      Anon key client
 └── Running at http://localhost:3001
@@ -188,7 +188,7 @@ Read `FOSSAPP_INTEGRATION_GUIDE.md` for complete instructions.
 ### Step 2: Copy Server Actions (10 min)
 ```bash
 # Copy content from search-server-actions.ts to:
-/home/sysadmin/nextjs/fossapp/src/lib/actions.ts
+/home/dimitris/foss/fossapp/src/lib/actions.ts
 
 # Already has:
 # - supabaseServer import ✅
@@ -204,14 +204,14 @@ Use examples from `FOSSAPP_INTEGRATION_GUIDE.md`:
 
 ### Step 4: Test (15 min)
 ```bash
-cd /home/sysadmin/nextjs/fossapp
+cd /home/dimitris/foss/nextjs/fossapp
 npm run dev  # Port 8080
 # Test all filter combinations
 ```
 
 ### Step 5: Deploy (5 min)
 ```bash
-cd /home/sysadmin/nextjs/fossapp
+cd /home/dimitris/foss/nextjs/fossapp
 docker-compose up -d
 ```
 

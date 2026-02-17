@@ -10,12 +10,12 @@ This repository contains a **complete, working product search system** for the F
 
 **Current Status**: ✅ v2.5 Production-Ready (November 19, 2025)
 **Running App**: http://localhost:3001 (Next.js 15.5.6)
-**Target Database**: Supabase PostgreSQL (14,889+ products)
+**Target Database**: Supabase PostgreSQL (2.27M products; originally built with 14,889 Delta Light products)
 **Production Deployment**: Ready for FOSSAPP integration at https://app.titancnc.eu
 
 **What's Included**:
 - ✅ **Fully functional search-test-app** (1,567 lines of React components)
-- ✅ **16 SQL files** implementing complete search schema
+- ✅ **20 SQL files** implementing complete search schema
 - ✅ **7 RPC functions** deployed to Supabase
 - ✅ **Delta Light-style filters** (Electricals, Design, Light Engine)
 - ✅ **Dynamic facets** with context-aware filter counts
@@ -37,7 +37,7 @@ This repository contains a **complete, working product search system** for the F
 - Common tasks and troubleshooting
 
 **QUICKSTART.md** - 30-minute implementation guide
-- SQL file execution order (00-09)
+- SQL file execution order (00-14)
 - ETIM feature ID mapping (CRITICAL)
 - Verification queries
 - Maintenance operations
@@ -171,7 +171,7 @@ This search system implements a **three-tier search architecture**:
 ```
 items.catalog (BASE TABLE - source of truth, all imported products)
     ↓ (filtered by selected catalogs)
-items.product_info (EXISTING MATERIALIZED VIEW - 14,889 products)
+items.product_info (EXISTING MATERIALIZED VIEW - legacy, kept for Retool)
     ↓ (dependent views)
 items.product_features_mv (EXISTING MATERIALIZED VIEW)
 items.product_categories_mv (EXISTING MATERIALIZED VIEW)
@@ -186,11 +186,16 @@ The implementation creates a new isolated `search` schema that **reads from** ex
 - `classification_rules` - Rules for auto-classification
 - `filter_definitions` - Available filters for UI
 
-**Materialized Views** (refreshed after catalog imports, reads from items.product_info):
+**Tables** (populated by rebuild scripts, reads from items.product_catalog):
+- `product_search` - **Wide denormalized table** (2.27M rows) — all filterable values as direct columns, replaces EAV product_filter_index
 - `product_taxonomy_flags` - Boolean flags per product (indoor, outdoor, recessed, etc.)
-- `product_filter_index` - Flattened feature index (power, IP rating, color temp, etc.)
-- `filter_facets` - Aggregated counts for filter UI
+- `facet_cache` - Pre-computed facets for main taxonomy categories (avoids expensive aggregation)
 - `taxonomy_product_counts` - Product counts per category
+
+**v3 Functions** (use product_search wide table):
+- `search_products_v3()` - Search with direct column comparisons (no EAV JOINs)
+- `count_products_v3()` - Count matching products
+- `get_facets_v3()` - Data-driven facets (reads filter_definitions, dynamic SQL)
 
 **Key Design Principles**:
 - Boolean flags for instant filtering (no JSON parsing)
@@ -273,39 +278,27 @@ Run the comprehensive verification script from QUICKSTART.md:262-330. Expected o
 
 **Complete Refresh Sequence (after BMEcat catalog import)**:
 
-```sql
--- 1. Existing views (already in your workflow, ~14 seconds total)
-REFRESH MATERIALIZED VIEW items.product_info;                    -- 5.2s
-REFRESH MATERIALIZED VIEW CONCURRENTLY items.product_features_mv; -- 7.6s
-REFRESH MATERIALIZED VIEW CONCURRENTLY items.product_categories_mv;
-REFRESH MATERIALIZED VIEW items.gcfv_mapping;
-REFRESH MATERIALIZED VIEW items.product_feature_group_mapping;
-
--- 2. NEW: Search schema views (adds ~6-9 seconds)
-REFRESH MATERIALIZED VIEW search.product_taxonomy_flags;         -- 2-3s
-REFRESH MATERIALIZED VIEW search.product_filter_index;           -- 3-5s
-REFRESH MATERIALIZED VIEW search.filter_facets;                  -- 1s
-
--- 3. Update statistics (recommended)
-ANALYZE search.product_taxonomy_flags;
-ANALYZE search.product_filter_index;
-ANALYZE search.filter_facets;
+```bash
+# Use the automated scripts (recommended):
+cd ~/foss/supabase/db-maintenance
+./refresh-matviews.sh              # Refresh matviews + taxonomy flags (~3.5 min)
+./rebuild-product-search.sh        # Rebuild wide table (~15 min)
 ```
 
-**Total refresh time**: ~20-23 seconds (was ~14 seconds before search schema)
+**Total refresh time**: ~3.5 min (matviews) + ~15 min (product_search rebuild)
 
 ---
 
 ## Integration with FOSSAPP
 
-This search schema is designed to integrate with the existing FOSSAPP Next.js application at `/home/sysadmin/nextjs/fossapp/`.
+This search schema is designed to integrate with the existing FOSSAPP Next.js application at `/home/dimitris/foss/fossapp/`.
 
 **Integration points**:
 - Database: Same Supabase instance (new `search` schema)
 - API Routes: Create new `/api/search/` endpoints (examples in complete guide)
 - Components: SearchBar, FilterPanel, ProductGrid (examples provided)
 
-**Example API route location**: `/home/sysadmin/nextjs/fossapp/src/app/api/search/route.ts`
+**Example API route location**: `/home/dimitris/foss/fossapp/src/app/api/search/route.ts`
 
 See `search-schema-complete-guide.md` Section 5 for complete Next.js integration code.
 
@@ -347,10 +340,10 @@ See QUICKSTART.md "Troubleshooting" section (lines 334-396) for complete guide.
 
 This search schema is part of the larger Foss SA ecosystem:
 
-- **FOSSAPP**: `/home/sysadmin/nextjs/fossapp/` - Production Next.js app
+- **FOSSAPP**: `/home/dimitris/foss/fossapp/` - Production Next.js app
 - **ETIM MCP**: Built-in MCP server for ETIM classification queries
 - **Supabase MCP**: Built-in MCP server for database operations
-- **Database Utils**: `/home/sysadmin/fossdb/utils/` - Maintenance scripts
+- **Database Utils**: `/home/dimitris/foss/supabase/db-maintenance/` - Maintenance scripts
 
 ---
 
@@ -789,14 +782,14 @@ When working with this repository:
 
 - **ETIM Documentation**: https://www.etim-international.com/
 - **Supabase Docs**: https://supabase.com/docs
-- **FOSSAPP Home**: `/home/sysadmin/CLAUDE.md` - Overall project structure
+- **FOSSAPP Home**: `/home/dimitris/foss/CLAUDE.md` - Overall project structure
 - **Troubleshooting**: QUICKSTART.md lines 334-396
 
 ---
 
 **Last Updated**: 2025-11-19 (Documentation reorganization completed)
 **Repository Purpose**: Complete v2.5 working search system + comprehensive documentation
-**Target Database**: Supabase PostgreSQL (14,889+ products)
+**Target Database**: Supabase PostgreSQL (56K+ products)
 **Running App**: http://localhost:3001 (search-test-app)
 **Implementation Time**: 30 minutes (quickstart) to 2-3 hours (full customization)
 

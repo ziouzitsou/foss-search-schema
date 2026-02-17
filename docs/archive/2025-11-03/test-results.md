@@ -170,7 +170,7 @@ END AS numeric_value
 
 ## 🎨 Test App Features
 
-**Location**: `/home/sysadmin/tools/searchdb/search-test-app/`
+**Location**: `/home/dimitris/foss/searchdb/search-test-app/`
 **URL**: http://localhost:3001
 
 ### UI Components

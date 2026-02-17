@@ -208,7 +208,7 @@
 
 ## Migration Files Applied
 
-All migrations in: `/home/sysadmin/tools/searchdb/migrations/`
+All migrations in: `/home/dimitris/foss/searchdb/migrations/`
 
 1. `create_get_available_facets_function.sql` - Created missing function
 2. `drop_deprecated_search_functions.sql` - Cleaned search schema

@@ -2,7 +2,7 @@
 
 **Status**: ✅ Production-Ready (v2.5)
 **Running at**: http://localhost:3001
-**Database**: Supabase PostgreSQL (14,889 products)
+**Database**: Supabase PostgreSQL (56K+ products)
 **Last Updated**: 2025-11-19
 
 ---
@@ -16,7 +16,7 @@ A **complete, working product search system** for the Foss SA lighting catalog w
 - ✅ **Dynamic facets** with context-aware counts
 - ✅ **Real-time auto-search** (no search button needed)
 - ✅ **Hierarchical taxonomy navigation** with 3-level categories
-- ✅ **16 SQL files** implementing complete search schema
+- ✅ **20 SQL files** implementing complete search schema
 - ✅ **7 RPC functions** deployed to Supabase
 
 This is **NOT a concept** - it's a fully functional application you can run right now.
@@ -28,7 +28,7 @@ This is **NOT a concept** - it's a fully functional application you can run righ
 ### Run the Test App (Fastest Way to See It Work)
 
 ```bash
-cd /home/sysadmin/tools/searchdb/search-test-app
+cd /home/dimitris/foss/searchdb/search-test-app
 npm run dev
 # Opens at http://localhost:3001
 ```
@@ -42,9 +42,9 @@ npm run dev
 ### Database Setup (If Starting Fresh)
 
 ```bash
-cd /home/sysadmin/tools/searchdb/sql
+cd /home/dimitris/foss/searchdb/sql
 
-# Execute files in order (00 → 09)
+# Execute files in order (00 → 14)
 # See sql/README.md for detailed instructions
 ```
 
@@ -321,8 +321,8 @@ For more: See [docs/guides/maintenance.md](./docs/guides/maintenance.md)
 
 ## 🤝 Related Projects
 
-- **FOSSAPP**: `/home/sysadmin/nextjs/fossapp/` - Production Next.js app
-- **Database Utils**: `/home/sysadmin/fossdb/utils/` - Maintenance scripts
+- **FOSSAPP**: `/home/dimitris/foss/fossapp/` - Production Next.js app
+- **Database Utils**: `/home/dimitris/foss/supabase/db-maintenance/` - Maintenance scripts
 - **ETIM MCP**: Built-in MCP server for ETIM queries
 - **Supabase MCP**: Built-in MCP server for database operations
 

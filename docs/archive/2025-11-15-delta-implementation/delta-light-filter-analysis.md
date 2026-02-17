@@ -2,7 +2,7 @@
 
 **Date**: 2025-01-15
 **URL Analyzed**: https://deltalight.com/en/product-browser (Indoor > Ceiling > Recessed)
-**Screenshots**: `/home/sysadmin/tools/searchdb/.playwright-mcp/delta-filters-panel.png`
+**Screenshots**: `/home/dimitris/foss/searchdb/.playwright-mcp/delta-filters-panel.png`
 
 ---
 

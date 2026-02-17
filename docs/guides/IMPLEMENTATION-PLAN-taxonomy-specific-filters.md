@@ -75,7 +75,7 @@ This is the **core architectural principle** of the searchdb system: **Configura
 
 #### Step 1.1: Create SQL File
 
-**File**: `/home/sysadmin/tools/searchdb/sql/10-create-filter-definitions-function.sql`
+**File**: `/home/dimitris/foss/searchdb/sql/10-create-filter-definitions-function.sql`
 
 ```sql
 -- =====================================================
@@ -204,7 +204,7 @@ SELECT * FROM get_filter_definitions_with_type('DRIVERS');
 
 #### Step 2.1: Track Selected Taxonomy in Main Page
 
-**File**: `/home/sysadmin/tools/searchdb/search-test-app/app/page.tsx`
+**File**: `/home/dimitris/foss/searchdb/search-test-app/app/page.tsx`
 
 **Current Code** (lines 68-69):
 ```typescript
@@ -259,7 +259,7 @@ const [activeTab, setActiveTab] = useState('') // Holds taxonomy code (e.g., 'LU
 
 #### Step 2.2: Verify FilterPanel Props
 
-**File**: `/home/sysadmin/tools/searchdb/search-test-app/components/FilterPanel.tsx`
+**File**: `/home/dimitris/foss/searchdb/search-test-app/components/FilterPanel.tsx`
 
 **Current Code** (line 36):
 ```typescript
@@ -317,7 +317,7 @@ useEffect(() => {
 
 #### Step 3.1: Make Universal Filters
 
-**File**: Create `/home/sysadmin/tools/searchdb/sql/11-update-filter-taxonomy-mapping.sql`
+**File**: Create `/home/dimitris/foss/searchdb/sql/11-update-filter-taxonomy-mapping.sql`
 
 ```sql
 -- =====================================================
@@ -516,7 +516,7 @@ VALUES
 
 #### Step 4.1: Create Taxonomy-Specific Filters Guide
 
-**File**: `/home/sysadmin/tools/searchdb/docs/guides/taxonomy-specific-filters.md`
+**File**: `/home/dimitris/foss/searchdb/docs/guides/taxonomy-specific-filters.md`
 
 **Content Outline**:
 1. Vision statement (configuration over code)
@@ -535,7 +535,7 @@ VALUES
 
 #### Step 4.2: Update Existing Documentation
 
-**File**: `/home/sysadmin/tools/searchdb/docs/guides/delta-light-filters.md`
+**File**: `/home/dimitris/foss/searchdb/docs/guides/delta-light-filters.md`
 
 **Add Section** (after Phase 3):
 ```markdown
@@ -570,7 +570,7 @@ Filters are inherited by child taxonomies. Example:
 - Visible in: LUMINAIRE, LUMINAIRE-INDOOR-CEILING, LUMINAIRE-INDOOR-WALL, etc.
 ```
 
-**File**: `/home/sysadmin/tools/searchdb/README.md`
+**File**: `/home/dimitris/foss/searchdb/README.md`
 
 **Add to Key Concepts** section:
 ```markdown
@@ -587,7 +587,7 @@ field. No code changes required to add/remove filters for categories.
 
 #### Step 4.3: Update Filter Types Reference
 
-**File**: `/home/sysadmin/tools/searchdb/docs/reference/filter-types.md`
+**File**: `/home/dimitris/foss/searchdb/docs/reference/filter-types.md`
 
 **Add Section** at the end:
 ```markdown
@@ -770,7 +770,7 @@ WHERE filter_key = 'ip';
 
 1. **Check where we left off:**
    ```bash
-   cat /home/sysadmin/tools/searchdb/docs/guides/IMPLEMENTATION-PLAN-taxonomy-specific-filters.md | grep "\- \[ \]" | head -5
+   cat /home/dimitris/foss/searchdb/docs/guides/IMPLEMENTATION-PLAN-taxonomy-specific-filters.md | grep "\- \[ \]" | head -5
    ```
 
 2. **Run the next unchecked step:**
@@ -781,7 +781,7 @@ WHERE filter_key = 'ip';
 
 3. **Test after each phase:**
    ```bash
-   cd /home/sysadmin/tools/searchdb/search-test-app
+   cd /home/dimitris/foss/searchdb/search-test-app
    npm run dev  # Should already be running
    # Open http://localhost:3001 and test
    ```

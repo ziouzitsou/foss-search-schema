@@ -15,7 +15,7 @@ The app is **already running** at:
 
 If not running:
 ```bash
-cd /home/sysadmin/tools/searchdb/search-test-app
+cd /home/dimitris/foss/searchdb/search-test-app
 npm run dev
 ```
 
@@ -424,7 +424,7 @@ npm 9+
 
 ### Install & Run
 ```bash
-cd /home/sysadmin/tools/searchdb/search-test-app
+cd /home/dimitris/foss/searchdb/search-test-app
 
 # Install dependencies (first time only)
 npm install
@@ -465,7 +465,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ### Problem: Server won't start
 **Solution**:
 ```bash
-cd /home/sysadmin/tools/searchdb/search-test-app
+cd /home/dimitris/foss/searchdb/search-test-app
 npm install
 npm run dev
 ```
