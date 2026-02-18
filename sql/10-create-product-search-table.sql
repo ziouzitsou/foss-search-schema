@@ -80,6 +80,9 @@ CREATE TABLE search.product_search (
     decorative_floor   BOOLEAN DEFAULT FALSE,
     decorative         BOOLEAN DEFAULT FALSE,
 
+    -- Miscellaneous
+    misc            BOOLEAN DEFAULT FALSE,
+
     -- Special types
     led_strip       BOOLEAN DEFAULT FALSE,
     track_system    BOOLEAN DEFAULT FALSE,
@@ -159,6 +162,19 @@ CREATE INDEX idx_ps_suspended ON search.product_search (product_id) WHERE suspen
 CREATE INDEX idx_ps_dimmable ON search.product_search (product_id) WHERE dimmable = TRUE;
 CREATE INDEX idx_ps_trimless ON search.product_search (product_id) WHERE trimless = TRUE;
 CREATE INDEX idx_ps_submersible ON search.product_search (product_id) WHERE submersible = TRUE;
+CREATE INDEX idx_ps_misc ON search.product_search (foss_pid) WHERE misc = TRUE;
+
+-- Root category partial indexes on foss_pid (for ORDER BY foss_pid + LIMIT optimization)
+CREATE INDEX idx_ps_luminaire_foss_pid ON search.product_search (foss_pid) WHERE luminaire = TRUE;
+CREATE INDEX idx_ps_accessory ON search.product_search (foss_pid) WHERE accessory = TRUE;
+CREATE INDEX idx_ps_driver ON search.product_search (foss_pid) WHERE driver = TRUE;
+CREATE INDEX idx_ps_lamp ON search.product_search (foss_pid) WHERE lamp = TRUE;
+
+-- Composite partial indexes for multi-boolean filter combinations
+CREATE INDEX idx_ps_luminaire_indoor_outdoor ON search.product_search (foss_pid)
+    WHERE luminaire = TRUE AND indoor = TRUE AND outdoor = TRUE;
+CREATE INDEX idx_ps_luminaire_outdoor ON search.product_search (foss_pid)
+    WHERE luminaire = TRUE AND outdoor = TRUE;
 
 -- Categorical columns (B-tree for equality/IN queries)
 CREATE INDEX idx_ps_ip_rating ON search.product_search (ip_rating) WHERE ip_rating IS NOT NULL;

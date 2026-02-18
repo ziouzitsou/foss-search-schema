@@ -306,8 +306,8 @@ BEGIN
     EXECUTE 'EXPLAIN (FORMAT JSON) SELECT * FROM search.product_search ps ' || base_where INTO explain_result;
     result := (explain_result->0->'Plan'->>'Plan Rows')::BIGINT;
 
-    -- For small result sets (< 100K), do exact count (fast enough)
-    IF result < 100000 THEN
+    -- For small-to-moderate result sets (< 500K), do exact count (fast enough)
+    IF result < 500000 THEN
         EXECUTE 'SELECT COUNT(*) FROM search.product_search ps ' || base_where INTO result;
     END IF;
 
@@ -354,27 +354,20 @@ DECLARE
     cached_data JSONB;
 BEGIN
     -- Check filter types for cache strategy
-    -- "narrow" = supplier, categorical, range, text (changes facet distribution significantly)
-    -- "broad" = boolean flags only (facet distribution stays ~same as taxonomy-only)
+    -- "narrow" = any filter that changes facet distribution significantly
+    -- Now includes boolean flags (indoor, outdoor, etc.) for accurate counts
     has_narrow_filters := (
         p_query IS NOT NULL OR
         (p_suppliers IS NOT NULL AND cardinality(p_suppliers) > 0) OR
-        (p_filters IS NOT NULL AND p_filters != '{}'::JSONB)
-    );
-
-    has_extra_filters := (
-        has_narrow_filters OR
+        (p_filters IS NOT NULL AND p_filters != '{}'::JSONB) OR
         p_indoor IS NOT NULL OR p_outdoor IS NOT NULL OR
         p_submersible IS NOT NULL OR p_trimless IS NOT NULL OR
-        p_cut_shape_round IS NOT NULL OR p_cut_shape_rectangular IS NOT NULL OR
-        (p_suppliers IS NOT NULL AND cardinality(p_suppliers) > 0) OR
-        (p_filters IS NOT NULL AND p_filters != '{}'::JSONB)
+        p_cut_shape_round IS NOT NULL OR p_cut_shape_rectangular IS NOT NULL
     );
 
-    -- FAST PATH: Return cached facets when no narrow filters are applied.
-    -- Boolean-only filters (indoor, outdoor, etc.) don't significantly change
-    -- facet distributions, so cached taxonomy facets are a good approximation.
-    -- Only supplier/categorical/range/text filters warrant fresh computation.
+    has_extra_filters := has_narrow_filters;
+
+    -- FAST PATH: Return cached facets when no filters are applied.
     IF NOT has_narrow_filters AND p_taxonomy_codes IS NOT NULL AND cardinality(p_taxonomy_codes) = 1 THEN
         SELECT fc.facet_data INTO cached_data
         FROM search.facet_cache fc
